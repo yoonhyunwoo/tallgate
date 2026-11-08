@@ -69,9 +69,16 @@ class TallGateAccessibilityService : AccessibilityService() {
                     redirectToInstagramHome(root, R.string.toast_blocked_reels)
                     return
                 }
+
+                // C. 홈의 'For you' 탭은 릴스 뷰어(clips_viewer_container)를 그대로 임베드하므로 'Feed' 탭으로 되돌림
+                if (switchHomeToFeedTab(root)) {
+                    Log.i(TAG, "Home 'For you' tab (embedded reels) -> switching to Feed tab")
+                    announceBlock(R.string.toast_blocked_reels)
+                    return
+                }
             }
 
-            // C. 탐색 탭 차단
+            // D. 탐색 탭 차단
             if (prefs.isInstagramExploreBlocked) {
                 if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
                     val viewId = event.source?.viewIdResourceName?.lowercase().orEmpty()
@@ -115,6 +122,18 @@ class TallGateAccessibilityService : AccessibilityService() {
     }
 
     /**
+     * 홈 상단 탭 스트립(Feed / For you)에서 첫 번째가 아닌 탭이 선택되어 있으면 첫 번째(Feed) 탭을 눌러 복귀
+     */
+    private fun switchHomeToFeedTab(root: AccessibilityNodeInfo): Boolean {
+        val strip = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/merged_feeds_static_tab_strip")
+            .firstOrNull() ?: return false
+        val tabs = (0 until strip.childCount).mapNotNull { strip.getChild(it) }
+        val selectedIndex = tabs.indexOfFirst { tab -> (0 until tab.childCount).any { tab.getChild(it)?.isSelected == true } }
+        if (selectedIndex <= 0) return false
+        return tabs[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+    }
+
+    /**
      * DM 대화방(채팅창) 내부인지 확인
      */
     private fun isInstagramDmRoom(root: AccessibilityNodeInfo): Boolean {
@@ -128,8 +147,6 @@ class TallGateAccessibilityService : AccessibilityService() {
      * 릴스 탭에 있을 때 앱을 끄지 않고, 홈(feed) 탭을 대신 클릭해 평화롭게 메인 피드로 복귀
      */
     private fun redirectToInstagramHome(root: AccessibilityNodeInfo, toastRes: Int) {
-        lastBlockedTimestamp = System.currentTimeMillis()
-
         val feedTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/feed_tab")
         val feedTab = feedTabs.firstOrNull()
 
@@ -139,6 +156,11 @@ class TallGateAccessibilityService : AccessibilityService() {
             performGlobalAction(GLOBAL_ACTION_BACK)
         }
 
+        announceBlock(toastRes)
+    }
+
+    private fun announceBlock(toastRes: Int) {
+        lastBlockedTimestamp = System.currentTimeMillis()
         if (prefs.isHapticEnabled) vibrate()
         if (prefs.isToastEnabled) {
             Toast.makeText(this, toastRes, Toast.LENGTH_SHORT).show()
@@ -178,12 +200,8 @@ class TallGateAccessibilityService : AccessibilityService() {
     }
 
     private fun escapeWithBack(toastRes: Int) {
-        lastBlockedTimestamp = System.currentTimeMillis()
         performGlobalAction(GLOBAL_ACTION_BACK)
-        if (prefs.isHapticEnabled) vibrate()
-        if (prefs.isToastEnabled) {
-            Toast.makeText(this, toastRes, Toast.LENGTH_SHORT).show()
-        }
+        announceBlock(toastRes)
     }
 
     private fun vibrate() {

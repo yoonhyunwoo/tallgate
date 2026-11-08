@@ -13,6 +13,7 @@ class DisclosureActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityDisclosureBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.padForSystemBars()
 
         binding.btnAgree.setOnClickListener {
             BlockPreferences(this).isDisclosureAccepted = true

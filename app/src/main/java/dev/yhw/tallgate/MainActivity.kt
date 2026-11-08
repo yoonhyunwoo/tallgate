@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.padForSystemBars()
 
         bind(binding.switchYtShorts, prefs::isYouTubeShortsBlocked)
         bind(binding.switchInstaReels, prefs::isInstagramReelsBlocked)

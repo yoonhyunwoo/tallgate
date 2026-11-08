@@ -2,33 +2,23 @@
     <string name="app_name">TallGate</string>
     <string name="accessibility_service_description">TallGate는 인스타그램 릴스, 유튜브 쇼츠 등 도파민을 유발하는 무한 스크롤 숏폼 콘텐츠를 감지하여 자동으로 차단해주는 디지털 디톡스 도우미입니다.</string>
 
-    <string name="status_active_title">TallGate 보호 활성화됨</string>
-    <string name="status_active_desc">설정한 앱의 숏폼 및 탐색 기능이 차단되고 있습니다.</string>
+    <string name="header_title">tallgate</string>
+    <string name="more_options">더보기</string>
+
     <string name="status_inactive_title">접근성 서비스 권한 필요</string>
     <string name="status_inactive_desc">숏폼 콘텐츠를 감지하고 차단하려면 접근성 권한이 필요합니다. 탭하여 설정으로 이동하세요.</string>
     <string name="btn_enable_accessibility">권한 설정하러 가기</string>
 
-    <string name="section_apps">차단 대상 앱 및 기능</string>
+    <string name="section_apps">차단 대상</string>
     <string name="app_instagram">Instagram</string>
     <string name="app_youtube">YouTube</string>
     <string name="app_tiktok">TikTok</string>
+    <string name="target_shorts">Shorts</string>
+    <string name="target_reels">Reels</string>
 
-    <string name="feature_insta_reels">릴스 (Reels) 차단</string>
-    <string name="feature_insta_reels_desc">릴스 탭 및 피드 릴스 뷰어 진입 차단</string>
-    <string name="feature_insta_explore">탐색 (돋보기) 탭 차단</string>
-    <string name="feature_insta_explore_desc">알고리즘 추천 탐색 탭 진입 차단</string>
-
-    <string name="feature_yt_shorts">쇼츠 (Shorts) 차단</string>
-    <string name="feature_yt_shorts_desc">하단 쇼츠 탭 및 쇼츠 재생 진입 차단</string>
-
-    <string name="feature_tiktok_feed">추천 피드 (For You) 차단</string>
-    <string name="feature_tiktok_feed_desc">알고리즘 기반 무한 스크롤 피드 차단</string>
-
-    <string name="section_preferences">동작 설정</string>
-    <string name="pref_haptic">차단 시 진동 알림</string>
-    <string name="pref_haptic_desc">숏폼이 차단될 때 미세한 진동 피드백 제공</string>
-    <string name="pref_toast">차단 안내 메시지 표시</string>
-    <string name="pref_toast_desc">차단 시 화면 하단에 짧은 안내 토스트 표시</string>
+    <string name="menu_insta_explore">Instagram 탐색 탭 차단</string>
+    <string name="menu_haptic">차단 시 진동 알림</string>
+    <string name="menu_toast">차단 안내 메시지 표시</string>
 
     <string name="toast_blocked_reels">🚫 TallGate: 릴스가 차단되었습니다.</string>
     <string name="toast_blocked_explore">🚫 TallGate: 탐색 탭이 차단되었습니다.</string>

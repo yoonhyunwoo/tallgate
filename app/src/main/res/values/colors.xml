@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#1E293B</color>
-    <color name="secondary">#3B82F6</color>
-
-    <color name="bg_light">#F8FAFC</color>
-    <color name="card_bg">#FFFFFF</color>
-    <color name="card_stroke">#E2E8F0</color>
-
-    <color name="text_primary">#0F172A</color>
-    <color name="text_secondary">#64748B</color>
-
-    <color name="status_active_bg">#ECFDF5</color>
-    <color name="status_active_stroke">#A7F3D0</color>
-    <color name="status_active_text">#065F46</color>
-
-    <color name="status_inactive_bg">#FEF3C7</color>
-    <color name="status_inactive_stroke">#FDE68A</color>
-    <color name="status_inactive_text">#92400E</color>
-
-    <color name="brand_instagram">#E1306C</color>
-    <color name="brand_youtube">#FF0000</color>
-    <color name="brand_tiktok">#000000</color>
+    <color name="bg">#0B0B10</color>
+    <color name="card">#17171E</color>
+    <color name="divider">#2A2A33</color>
+    <color name="accent">#8E7CF3</color>
+    <color name="on_accent">#FFFFFF</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#A1A1AD</color>
+    <color name="switch_off_track">#4B4B53</color>
+    <color name="switch_off_thumb">#D9D9DF</color>
+    <color name="warning_bg">#2A2112</color>
+    <color name="warning_stroke">#5C4A1F</color>
+    <color name="warning_text">#F5C45E</color>
 </resources>

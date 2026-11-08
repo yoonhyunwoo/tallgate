@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@color/bg"
     android:fillViewport="true">
 
     <LinearLayout
@@ -12,68 +12,71 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
-        android:paddingTop="32dp"
+        android:paddingTop="24dp"
         android:paddingBottom="48dp">
 
-        <TextView
-            style="@style/TallGate.Text"
-            android:text="@string/app_name"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <TextView
-            style="@style/TallGate.Text"
-            android:layout_marginTop="4dp"
-            android:text="숏폼 무한 스크롤 방지 게이트웨이"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_logo" />
+
+            <TextView
+                style="@style/TallGate.Text"
+                android:layout_width="0dp"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:text="@string/header_title"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnMore"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/more_options"
+                android:src="@drawable/ic_more_vert" />
+        </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:cardCornerRadius="16dp"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/warning_bg"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
-            app:strokeWidth="1.5dp"
-            tools:cardBackgroundColor="@color/status_active_bg"
-            tools:strokeColor="@color/status_active_stroke">
+            app:strokeColor="@color/warning_stroke"
+            app:strokeWidth="1dp"
+            tools:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
-
-                <LinearLayout style="@style/TallGate.Row">
-
-                    <TextView
-                        android:id="@+id/tvStatusIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        tools:text="🟢" />
-
-                    <TextView
-                        android:id="@+id/tvStatusTitle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="TallGate 보호 활성화됨"
-                        tools:textColor="@color/status_active_text" />
-                </LinearLayout>
+                android:padding="20dp">
 
                 <TextView
-                    android:id="@+id/tvStatusDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    style="@style/TallGate.Text"
+                    android:text="@string/status_inactive_title"
+                    android:textColor="@color/warning_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    style="@style/TallGate.Text"
                     android:layout_marginTop="8dp"
-                    android:textSize="13sp"
-                    tools:text="설정한 앱의 숏폼 및 탐색 기능이 차단되고 있습니다."
-                    tools:textColor="@color/status_active_text" />
+                    android:text="@string/status_inactive_desc"
+                    android:textColor="@color/warning_text"
+                    android:textSize="13sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnEnableService"
@@ -81,52 +84,73 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="@string/btn_enable_accessibility"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:text="@string/btn_enable_accessibility" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            style="@style/TallGate.SectionLabel"
-            android:layout_marginTop="28dp"
-            android:text="@string/section_apps" />
-
         <com.google.android.material.card.MaterialCardView
-            style="@style/TallGate.Card"
-            android:layout_marginBottom="14dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="@color/card"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
-            <LinearLayout style="@style/TallGate.CardBody">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="22dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    style="@style/TallGate.Text"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/section_apps"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout style="@style/TallGate.Row">
 
-                    <TextView
+                    <ImageView
                         style="@style/TallGate.AppIcon"
-                        android:text="📷" />
+                        android:src="@drawable/ic_app_youtube" />
 
-                    <TextView
-                        style="@style/TallGate.AppName"
-                        android:text="@string/app_instagram" />
+                    <LinearLayout style="@style/TallGate.RowText">
 
-                    <TextView
-                        style="@style/TallGate.Badge"
-                        android:text="@string/app_instagram"
-                        android:textColor="@color/brand_instagram" />
+                        <TextView
+                            style="@style/TallGate.RowTitle"
+                            android:text="@string/app_youtube" />
+
+                        <TextView
+                            style="@style/TallGate.RowSubtitle"
+                            android:text="@string/target_shorts" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchYtShorts"
+                        style="@style/TallGate.Switch" />
                 </LinearLayout>
 
                 <View style="@style/TallGate.Divider" />
 
                 <LinearLayout style="@style/TallGate.Row">
 
+                    <ImageView
+                        style="@style/TallGate.AppIcon"
+                        android:src="@drawable/ic_app_instagram" />
+
                     <LinearLayout style="@style/TallGate.RowText">
 
                         <TextView
-                            style="@style/TallGate.FeatureTitle"
-                            android:text="@string/feature_insta_reels" />
+                            style="@style/TallGate.RowTitle"
+                            android:text="@string/app_instagram" />
 
                         <TextView
-                            style="@style/TallGate.FeatureDesc"
-                            android:text="@string/feature_insta_reels_desc" />
+                            style="@style/TallGate.RowSubtitle"
+                            android:text="@string/target_reels" />
                     </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
@@ -134,107 +158,23 @@
                         style="@style/TallGate.Switch" />
                 </LinearLayout>
 
-                <LinearLayout
-                    style="@style/TallGate.Row"
-                    android:layout_marginTop="16dp">
-
-                    <LinearLayout style="@style/TallGate.RowText">
-
-                        <TextView
-                            style="@style/TallGate.FeatureTitle"
-                            android:text="@string/feature_insta_explore" />
-
-                        <TextView
-                            style="@style/TallGate.FeatureDesc"
-                            android:text="@string/feature_insta_explore_desc" />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchInstaExplore"
-                        style="@style/TallGate.Switch" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            style="@style/TallGate.Card"
-            android:layout_marginBottom="14dp">
-
-            <LinearLayout style="@style/TallGate.CardBody">
-
-                <LinearLayout style="@style/TallGate.Row">
-
-                    <TextView
-                        style="@style/TallGate.AppIcon"
-                        android:text="▶️" />
-
-                    <TextView
-                        style="@style/TallGate.AppName"
-                        android:text="@string/app_youtube" />
-
-                    <TextView
-                        style="@style/TallGate.Badge"
-                        android:text="@string/app_youtube"
-                        android:textColor="@color/brand_youtube" />
-                </LinearLayout>
-
                 <View style="@style/TallGate.Divider" />
 
                 <LinearLayout style="@style/TallGate.Row">
 
-                    <LinearLayout style="@style/TallGate.RowText">
-
-                        <TextView
-                            style="@style/TallGate.FeatureTitle"
-                            android:text="@string/feature_yt_shorts" />
-
-                        <TextView
-                            style="@style/TallGate.FeatureDesc"
-                            android:text="@string/feature_yt_shorts_desc" />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchYtShorts"
-                        style="@style/TallGate.Switch" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            style="@style/TallGate.Card"
-            android:layout_marginBottom="14dp">
-
-            <LinearLayout style="@style/TallGate.CardBody">
-
-                <LinearLayout style="@style/TallGate.Row">
-
-                    <TextView
+                    <ImageView
                         style="@style/TallGate.AppIcon"
-                        android:text="🎵" />
-
-                    <TextView
-                        style="@style/TallGate.AppName"
-                        android:text="@string/app_tiktok" />
-
-                    <TextView
-                        style="@style/TallGate.Badge"
-                        android:text="@string/app_tiktok"
-                        android:textColor="@color/brand_tiktok" />
-                </LinearLayout>
-
-                <View style="@style/TallGate.Divider" />
-
-                <LinearLayout style="@style/TallGate.Row">
+                        android:src="@drawable/ic_app_tiktok" />
 
                     <LinearLayout style="@style/TallGate.RowText">
 
                         <TextView
-                            style="@style/TallGate.FeatureTitle"
-                            android:text="@string/feature_tiktok_feed" />
+                            style="@style/TallGate.RowTitle"
+                            android:text="@string/app_tiktok" />
 
                         <TextView
-                            style="@style/TallGate.FeatureDesc"
-                            android:text="@string/feature_tiktok_feed_desc" />
+                            style="@style/TallGate.RowSubtitle"
+                            android:text="@string/target_shorts" />
                     </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
@@ -243,55 +183,5 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            style="@style/TallGate.SectionLabel"
-            android:layout_marginTop="20dp"
-            android:text="@string/section_preferences" />
-
-        <com.google.android.material.card.MaterialCardView style="@style/TallGate.Card">
-
-            <LinearLayout style="@style/TallGate.CardBody">
-
-                <LinearLayout style="@style/TallGate.Row">
-
-                    <LinearLayout style="@style/TallGate.RowText">
-
-                        <TextView
-                            style="@style/TallGate.FeatureTitle"
-                            android:text="@string/pref_haptic" />
-
-                        <TextView
-                            style="@style/TallGate.FeatureDesc"
-                            android:text="@string/pref_haptic_desc" />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchHaptic"
-                        style="@style/TallGate.Switch" />
-                </LinearLayout>
-
-                <View style="@style/TallGate.Divider" />
-
-                <LinearLayout style="@style/TallGate.Row">
-
-                    <LinearLayout style="@style/TallGate.RowText">
-
-                        <TextView
-                            style="@style/TallGate.FeatureTitle"
-                            android:text="@string/pref_toast" />
-
-                        <TextView
-                            style="@style/TallGate.FeatureDesc"
-                            android:text="@string/pref_toast_desc" />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchToast"
-                        style="@style/TallGate.Switch" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

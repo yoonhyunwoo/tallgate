@@ -1,36 +1,40 @@
 # AGENTS.md
 
-## Build
+## Build & Testing
 
-- Run Gradle from the repo root. There are no unit tests; the verifiers are `./gradlew :app:assembleDebug` and `:app:lintDebug`. UI and blocking behavior can only be verified on a device.
-- `gradle.properties` pins `org.gradle.java.home=/opt/homebrew/opt/openjdk@17`. This is machine-specific and breaks builds elsewhere. Do not copy the pattern; move it to `~/.gradle/gradle.properties` if touching it.
-- `local.properties` (`sdk.dir`) is gitignored and per-machine.
+- Run Gradle from the repository root. Verification commands: `./gradlew :app:assembleDebug` and `:app:lintDebug` (no unit tests exist; UI and blocking behavior require on-device testing).
+- `gradle.properties` pins `org.gradle.java.home=/opt/homebrew/opt/openjdk@17`. Do not duplicate machine-specific paths; move to `~/.gradle/gradle.properties` if modifying.
+- `local.properties` (`sdk.dir`) is machine-specific and gitignored.
 
-## Blocking logic depends on third-party view IDs
+## View ID & Detection Logic
 
-- Detection in `TallGateAccessibilityService` matches resource IDs of Instagram and YouTube (`IG_ID`, `YT_ID`). Those apps change IDs between versions and the IDs here come from UI dumps on real builds, so never rename or "clean up" them from guesswork. Re-dump on a device (`uiautomator dump`) before changing any.
-- Instagram quirk: the Home "For you" tab embeds the Reels viewer while the bottom `tab_bar` is still visible. Hence the two-branch logic: tab bar visible -> click the "Feed" tab; tab bar hidden -> treat the Reels viewer as standalone and press back.
-- YouTube Shorts and TikTok detection are unverified on a device. TikTok is a text match ("for you" / "추천") with a depth limit and may false-positive.
+- Third-party IDs in `TallGateAccessibilityService` (`IG_ID`, `YT_ID`) originate from device UI dumps (`uiautomator dump`). Never guess or rename them without re-verifying against real builds.
+- Instagram handling: The home "For you" tab embeds the Reels viewer while the bottom `tab_bar` remains visible. If `tab_bar` is present, switch to the "Feed" tab; if hidden, treat as a standalone Reels viewer and trigger back navigation.
+- YouTube Shorts and TikTok detection: TikTok uses text matching (`"for you"` / `"추천"`) with a depth limit and can produce false positives.
 
-## Accessibility service constraints
+## Accessibility Service Constraints
 
-- Package scope is declared twice: `android:packageNames` and `accessibilityEventTypes` in `res/xml/tallgate_accessibility_service.xml`, and the `PKG_*` constants in the service. Adding an app requires updating both; the XML list is what prevents the service from receiving events from other apps (privacy and the disclosure text rely on this).
-- `rootFor(event)` guards against acting on a window from a different package than the event. Keep it for every new handler.
-- Debounce uses `SystemClock.elapsedRealtime` (not wall clock). Back/click actions fire from content-changed events, so removing the debounce causes repeated back presses.
-- The service does nothing until `BlockPreferences.isDisclosureAccepted` is true. `MainActivity` redirects to `DisclosureActivity` before inflating its binding. This is a Google Play prominent-disclosure requirement, so keep the disclosure copy consistent with what the service actually reads (no storage, no network, no `INTERNET` permission).
-- Force-stopping the app disables the accessibility service; re-enable with `adb shell settings put secure enabled_accessibility_services dev.yhw.tallgate/.TallGateAccessibilityService` and `accessibility_enabled 1`.
+- Package scope must be declared in both `res/xml/tallgate_accessibility_service.xml` (`android:packageNames`) and `TallGateAccessibilityService.kt` (`PKG_*`). The XML configuration restricts event delivery from other apps.
+- `rootFor(event)` ensures operations target only the active window of the triggering package. Maintain this guard in all event handlers.
+- Debounce relies on `SystemClock.elapsedRealtime()` (not wall clock). Content-change events fire frequently; removing debounce causes repeated back presses.
+- Prominent disclosure: The service requires `BlockPreferences.isDisclosureAccepted == true` to operate. `MainActivity` redirects to `DisclosureActivity` if consent is pending. Disclosure copy must accurately reflect service operations (no storage, no network, no `INTERNET` permission).
+- Re-enabling after force-stop:
+  ```bash
+  adb shell settings put secure enabled_accessibility_services dev.yhw.tallgate/.TallGateAccessibilityService
+  adb shell settings put secure accessibility_enabled 1
+  ```
 
-## Persisted state
+## Persisted State
 
-- SharedPreferences file `tallgate_block_prefs` and the `key_*` names in `BlockPreferences` are stored on user devices; renaming resets users' settings.
+- `tallgate_block_prefs` SharedPreferences and `key_*` names in `BlockPreferences` are persisted on user devices. Do not rename keys without migration.
 
-## Strings
+## Localization
 
-- English `values/strings.xml` is the default; `values-ko/strings.xml` must mirror every key. Brand and target app names are `translatable="false"`.
+- English (`values/strings.xml`) is default; Korean (`values-ko/strings.xml`) must mirror all keys. Brand and target app names must retain `translatable="false"`.
 
-## Release
+## Releases & Distribution
 
-- Distribution is a GitHub Release `v1.0.0` with asset `TallGate.apk`, linked from the site and README via `releases/latest/download/TallGate.apk`. The maintainer updates the asset in place (`gh release upload v1.0.0 --clobber`) and moves the tag, instead of cutting new releases. Push, release, and tag changes only when explicitly asked.
-- The APK is signed with the debug key. Switching to a release key forces existing installs to uninstall first.
-- `docs/` is the GitHub Pages site (`main:/docs`). README and `docs/index.html` are maintained by the owner in English; do not rewrite their copy.
-- `applicationId` `dev.yhw.tallgate` is permanent if ever uploaded to Google Play.
+- Distribution uses GitHub Release `v1.0.0` with asset `TallGate.apk`. Do not cut new releases unless explicitly instructed; updates replace the asset in place (`gh release upload v1.0.0 --clobber`) and move the tag.
+- The APK is debug-signed.
+- GitHub Pages is served from `docs/` (`main:/docs`).
+- `applicationId` `dev.yhw.tallgate` must remain constant.

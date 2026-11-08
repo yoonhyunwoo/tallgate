@@ -36,13 +36,6 @@
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
-            <ImageButton
-                android:id="@+id/btnMore"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/more_options"
-                android:src="@drawable/ic_more_vert" />
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
@@ -166,6 +159,31 @@
 
                     <ImageView
                         style="@style/TallGate.AppIcon"
+                        android:src="@drawable/ic_app_instagram" />
+
+                    <LinearLayout style="@style/TallGate.RowText">
+
+                        <TextView
+                            style="@style/TallGate.RowTitle"
+                            android:text="@string/app_instagram" />
+
+                        <TextView
+                            style="@style/TallGate.RowSubtitle"
+                            android:text="@string/target_explore" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchInstaExplore"
+                        style="@style/TallGate.Switch"
+                        android:contentDescription="@string/switch_insta_explore" />
+                </LinearLayout>
+
+                <View style="@style/TallGate.Divider" />
+
+                <LinearLayout style="@style/TallGate.Row">
+
+                    <ImageView
+                        style="@style/TallGate.AppIcon"
                         android:src="@drawable/ic_app_tiktok" />
 
                     <LinearLayout style="@style/TallGate.RowText">
@@ -183,6 +201,68 @@
                         android:id="@+id/switchTiktokFeed"
                         style="@style/TallGate.Switch"
                         android:contentDescription="@string/switch_tiktok_feed" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/card"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="22dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    style="@style/TallGate.Text"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/section_feedback"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout style="@style/TallGate.Row">
+
+                    <LinearLayout
+                        style="@style/TallGate.RowText"
+                        android:layout_marginStart="0dp">
+
+                        <TextView
+                            style="@style/TallGate.RowTitle"
+                            android:text="@string/pref_haptic" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchHaptic"
+                        style="@style/TallGate.Switch"
+                        android:contentDescription="@string/pref_haptic" />
+                </LinearLayout>
+
+                <View style="@style/TallGate.Divider" />
+
+                <LinearLayout style="@style/TallGate.Row">
+
+                    <LinearLayout
+                        style="@style/TallGate.RowText"
+                        android:layout_marginStart="0dp">
+
+                        <TextView
+                            style="@style/TallGate.RowTitle"
+                            android:text="@string/pref_toast" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchToast"
+                        style="@style/TallGate.Switch"
+                        android:contentDescription="@string/pref_toast" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

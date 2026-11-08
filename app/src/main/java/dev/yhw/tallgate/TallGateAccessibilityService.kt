@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ComponentName
 import android.content.Context
 import android.os.Build
+import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -16,7 +17,7 @@ import android.widget.Toast
 class TallGateAccessibilityService : AccessibilityService() {
 
     private lateinit var prefs: BlockPreferences
-    private var lastBlockedTimestamp = 0L
+    private var lastBlockedAt = -DEBOUNCE_MS
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -27,97 +28,60 @@ class TallGateAccessibilityService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
+        if (SystemClock.elapsedRealtime() - lastBlockedAt < DEBOUNCE_MS) return
 
-        val packageName = event.packageName?.toString() ?: return
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - lastBlockedTimestamp < DEBOUNCE_MS) {
-            return
-        }
-
-        val root = rootInActiveWindow ?: event.source ?: return
-        when (packageName) {
-            PKG_INSTAGRAM -> handleInstagram(root, event)
-            PKG_YOUTUBE -> handleYouTube(root, event)
-            PKG_TIKTOK_GLOBAL, PKG_TIKTOK_ASIA -> handleTikTok(root, event)
+        when (event.packageName?.toString()) {
+            PKG_INSTAGRAM -> handleInstagram(event)
+            PKG_YOUTUBE -> handleYouTube(event)
+            PKG_TIKTOK_GLOBAL, PKG_TIKTOK_ASIA -> handleTikTok(event)
         }
     }
 
-    private fun handleInstagram(root: AccessibilityNodeInfo, event: AccessibilityEvent) {
-        // [1] 하단 탭 바(tab_bar) 존재 여부 확인
-        // 인스타그램에서 하단 탭 바가 화면에 보인다면 -> 사용자는 메인 탭(홈, DM, 탐색, 프로필)에 있는 상태입니다.
-        val tabBars = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/tab_bar")
-        val hasTabBar = tabBars.any { it.isVisibleToUser }
+    /**
+     * 이벤트를 발생시킨 앱의 윈도우 루트. 다른 앱 윈도우(런처, 시스템 UI)가 활성 상태면 null.
+     */
+    private fun rootFor(event: AccessibilityEvent): AccessibilityNodeInfo? {
+        val root = rootInActiveWindow ?: event.source ?: return null
+        return root.takeIf { it.packageName?.toString() == event.packageName?.toString() }
+    }
+
+    private fun handleInstagram(event: AccessibilityEvent) {
+        if (!prefs.isInstagramReelsBlocked && !prefs.isInstagramExploreBlocked) return
+        val root = rootFor(event) ?: return
+
+        // 하단 탭 바가 보이면 메인 탭(홈, DM, 탐색, 프로필)에 있는 상태
+        val hasTabBar = root.findAccessibilityNodeInfosByViewId("$IG_ID/tab_bar").any { it.isVisibleToUser }
 
         if (hasTabBar) {
-            // 메인 탭 화면에 있을 때는 하단의 릴스 탭을 직접 눌렀거나 선택된 경우만 홈으로 튕겨냅니다.
-            if (prefs.isInstagramReelsBlocked) {
-                // A. 릴스 탭 직접 클릭
-                if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
-                    val viewId = event.source?.viewIdResourceName?.lowercase().orEmpty()
-                    val desc = event.contentDescription?.toString()?.lowercase().orEmpty()
-                    if (viewId.contains("clips_tab") || desc == "reels" || desc == "릴스") {
-                        Log.i(TAG, "Reels tab clicked -> redirecting to Home feed")
-                        redirectToInstagramHome(root, R.string.toast_blocked_reels)
-                        return
-                    }
-                }
-
-                // B. 릴스 탭이 선택되어 있는 경우
-                val clipsTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_tab")
-                if (clipsTabs.any { it.isSelected }) {
-                    Log.i(TAG, "Reels tab is selected -> redirecting to Home feed")
-                    redirectToInstagramHome(root, R.string.toast_blocked_reels)
-                    return
-                }
-
-                // C. 홈의 'For you' 탭은 릴스 뷰어(clips_viewer_container)를 그대로 임베드하므로 'Feed' 탭으로 되돌림
-                if (switchHomeToFeedTab(root)) {
-                    Log.i(TAG, "Home 'For you' tab (embedded reels) -> switching to Feed tab")
-                    announceBlock(R.string.toast_blocked_reels)
-                    return
-                }
+            // 홈의 'For you' 탭은 릴스 뷰어(clips_viewer_container)를 그대로 임베드하므로 'Feed' 탭으로 되돌림
+            if (prefs.isInstagramReelsBlocked && switchHomeToFeedTab(root)) {
+                Log.i(TAG, "Home 'For you' tab (embedded reels) -> switching to Feed tab")
+                announceBlock(R.string.toast_blocked_reels)
+                return
             }
 
-            // D. 탐색 탭 차단
-            if (prefs.isInstagramExploreBlocked) {
-                if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
-                    val viewId = event.source?.viewIdResourceName?.lowercase().orEmpty()
-                    val desc = event.contentDescription?.toString()?.lowercase().orEmpty()
-                    if (viewId.contains("search_tab") || desc.contains("explore") || desc.contains("탐색")) {
-                        Log.i(TAG, "Explore tab clicked -> redirecting to Home feed")
-                        redirectToInstagramHome(root, R.string.toast_blocked_explore)
-                        return
-                    }
-                }
-                val searchTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/search_tab")
-                if (searchTabs.any { it.isSelected }) {
-                    Log.i(TAG, "Explore tab is selected -> redirecting to Home feed")
-                    redirectToInstagramHome(root, R.string.toast_blocked_explore)
-                    return
-                }
+            if (prefs.isInstagramExploreBlocked &&
+                root.findAccessibilityNodeInfosByViewId("$IG_ID/search_tab").any { it.isSelected }
+            ) {
+                Log.i(TAG, "Explore tab is selected -> redirecting to Home feed")
+                redirectToInstagramHome(root, R.string.toast_blocked_explore)
             }
-
-            // 하단 탭 바가 있고 릴스/탐색 탭이 아니라면 (즉, 홈 피드, DM, 프로필 등)
-            // 홈 피드 안에 릴스 추천 카드가 떠 있든 말든 절대 차단하지 않고 자유롭게 탐색 허용!
             return
         }
 
-        // [2] 하단 탭 바가 사라진 상태 -> 전체화면 세로 숏폼 뷰어(ClipsViewer)인지 검사
-        if (prefs.isInstagramReelsBlocked) {
-            // DM 대화방 내부(메시지 입력창)는 보호
-            if (isInstagramDmRoom(root)) {
-                return
-            }
+        // 하단 탭 바가 사라진 상태 -> 전체화면 세로 숏폼 뷰어(ClipsViewer)인지 검사
+        if (!prefs.isInstagramReelsBlocked) return
+        // DM 대화방 내부(메시지 입력창)는 보호
+        if (isInstagramDmRoom(root)) return
 
-            val hasVisibleClipsViewer = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_viewer_container").any { it.isVisibleToUser } ||
-                root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_video_container").any { it.isVisibleToUser } ||
+        val hasVisibleClipsViewer =
+            root.findAccessibilityNodeInfosByViewId("$IG_ID/clips_viewer_container").any { it.isVisibleToUser } ||
+                root.findAccessibilityNodeInfosByViewId("$IG_ID/clips_video_container").any { it.isVisibleToUser } ||
                 event.classNameContains("ClipsViewer", "ClipsActivity")
 
-            if (hasVisibleClipsViewer) {
-                Log.i(TAG, "Fullscreen Standalone Reels Viewer detected (no tab bar) -> escaping with back")
-                escapeWithBack(R.string.toast_blocked_reels)
-                return
-            }
+        if (hasVisibleClipsViewer) {
+            Log.i(TAG, "Fullscreen Standalone Reels Viewer detected (no tab bar) -> escaping with back")
+            escapeWithBack(R.string.toast_blocked_reels)
         }
     }
 
@@ -125,67 +89,64 @@ class TallGateAccessibilityService : AccessibilityService() {
      * 홈 상단 탭 스트립(Feed / For you)에서 첫 번째가 아닌 탭이 선택되어 있으면 첫 번째(Feed) 탭을 눌러 복귀
      */
     private fun switchHomeToFeedTab(root: AccessibilityNodeInfo): Boolean {
-        val strip = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/merged_feeds_static_tab_strip")
+        val strip = root.findAccessibilityNodeInfosByViewId("$IG_ID/merged_feeds_static_tab_strip")
             .firstOrNull() ?: return false
-        val tabs = (0 until strip.childCount).mapNotNull { strip.getChild(it) }
-        val selectedIndex = tabs.indexOfFirst { tab -> (0 until tab.childCount).any { tab.getChild(it)?.isSelected == true } }
+        val selectedIndex = (0 until strip.childCount).indexOfFirst { index ->
+            val tab = strip.getChild(index)
+            tab != null && (0 until tab.childCount).any { tab.getChild(it)?.isSelected == true }
+        }
         if (selectedIndex <= 0) return false
-        return tabs[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        return strip.getChild(0)?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true
     }
 
     /**
      * DM 대화방(채팅창) 내부인지 확인
      */
     private fun isInstagramDmRoom(root: AccessibilityNodeInfo): Boolean {
-        return root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/row_thread_composer").isNotEmpty() ||
-            root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/row_thread_composer_edittext").isNotEmpty() ||
-            root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/thread_title").isNotEmpty() ||
-            root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/direct_text_edit_text").isNotEmpty()
+        return listOf("row_thread_composer", "row_thread_composer_edittext", "thread_title", "direct_text_edit_text")
+            .any { root.findAccessibilityNodeInfosByViewId("$IG_ID/$it").isNotEmpty() }
     }
 
     /**
-     * 릴스 탭에 있을 때 앱을 끄지 않고, 홈(feed) 탭을 대신 클릭해 평화롭게 메인 피드로 복귀
+     * 현재 탭에서 홈 탭을 대신 클릭해 메인 피드로 복귀. 홈 탭을 못 찾으면 뒤로가기.
      */
     private fun redirectToInstagramHome(root: AccessibilityNodeInfo, toastRes: Int) {
-        val feedTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/feed_tab")
-        val feedTab = feedTabs.firstOrNull()
-
-        if (feedTab != null && !feedTab.isSelected) {
-            feedTab.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        val homeTab = root.findAccessibilityNodeInfosByViewId("$IG_ID/feed_switcher").firstOrNull()
+        if (homeTab != null) {
+            homeTab.performAction(AccessibilityNodeInfo.ACTION_CLICK)
         } else {
             performGlobalAction(GLOBAL_ACTION_BACK)
         }
-
         announceBlock(toastRes)
     }
 
     private fun announceBlock(toastRes: Int) {
-        lastBlockedTimestamp = System.currentTimeMillis()
+        lastBlockedAt = SystemClock.elapsedRealtime()
         if (prefs.isHapticEnabled) vibrate()
         if (prefs.isToastEnabled) {
             Toast.makeText(this, toastRes, Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun handleYouTube(root: AccessibilityNodeInfo, event: AccessibilityEvent) {
+    private fun handleYouTube(event: AccessibilityEvent) {
         if (!prefs.isYouTubeShortsBlocked) return
+        val root = rootFor(event) ?: return
 
-        val isShortsClick = event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED &&
-            (event.contentDescription?.toString()?.equals("Shorts", ignoreCase = true) == true ||
-             event.contentDescription?.toString()?.equals("쇼츠", ignoreCase = true) == true)
+        val isShortsScreen =
+            (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+                event.classNameContains("ReelWatch", "ShortsPlayer")) ||
+                root.findAccessibilityNodeInfosByViewId("$YT_ID/reel_watch_fragment_root").any { it.isVisibleToUser } ||
+                root.findAccessibilityNodeInfosByViewId("$YT_ID/reel_player_page_container").any { it.isVisibleToUser }
 
-        val isShortsScreen = event.classNameContains("ReelWatch", "ShortsPlayer") ||
-            root.findAccessibilityNodeInfosByViewId("com.google.android.youtube:id/reel_watch_fragment").any { it.isVisibleToUser } ||
-            root.findAccessibilityNodeInfosByViewId("com.google.android.youtube:id/reel_player_page").any { it.isVisibleToUser }
-
-        if (isShortsClick || isShortsScreen) {
+        if (isShortsScreen) {
             Log.i(TAG, "YouTube Shorts detected -> escaping")
             escapeWithBack(R.string.toast_blocked_shorts)
         }
     }
 
-    private fun handleTikTok(root: AccessibilityNodeInfo, event: AccessibilityEvent) {
+    private fun handleTikTok(event: AccessibilityEvent) {
         if (!prefs.isTikTokFeedBlocked) return
+        val root = rootFor(event) ?: return
 
         val isFeed = root.hasDeepNode(maxDepth = 8) { node ->
             val desc = node.desc
@@ -229,10 +190,12 @@ class TallGateAccessibilityService : AccessibilityService() {
         private const val TAG = "TallGateService"
         private const val DEBOUNCE_MS = 800L
 
-        const val PKG_INSTAGRAM = "com.instagram.android"
-        const val PKG_YOUTUBE = "com.google.android.youtube"
-        const val PKG_TIKTOK_GLOBAL = "com.zhiliaoapp.musically"
-        const val PKG_TIKTOK_ASIA = "com.ss.android.ugc.trill"
+        private const val PKG_INSTAGRAM = "com.instagram.android"
+        private const val PKG_YOUTUBE = "com.google.android.youtube"
+        private const val PKG_TIKTOK_GLOBAL = "com.zhiliaoapp.musically"
+        private const val PKG_TIKTOK_ASIA = "com.ss.android.ugc.trill"
+        private const val IG_ID = "$PKG_INSTAGRAM:id"
+        private const val YT_ID = "$PKG_YOUTUBE:id"
 
         @Volatile
         var isRunning = false
@@ -241,13 +204,12 @@ class TallGateAccessibilityService : AccessibilityService() {
         fun isServiceEnabled(context: Context): Boolean {
             if (isRunning) return true
 
-            val expected = ComponentName(context, TallGateAccessibilityService::class.java).flattenToString()
+            val self = ComponentName(context, TallGateAccessibilityService::class.java)
             val enabledServices =
                 Settings.Secure.getString(context.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
-            return enabledServices?.split(':')?.any { it.equals(expected, ignoreCase = true) } == true
+            return enabledServices?.split(':')?.any { ComponentName.unflattenFromString(it) == self } == true
         }
 
-        private val AccessibilityNodeInfo.id get() = viewIdResourceName?.lowercase().orEmpty()
         private val AccessibilityNodeInfo.desc get() = contentDescription?.toString()?.lowercase().orEmpty()
         private val AccessibilityNodeInfo.label get() = text?.toString()?.lowercase().orEmpty()
 

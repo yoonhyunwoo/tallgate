@@ -131,7 +131,8 @@
 
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchYtShorts"
-                        style="@style/TallGate.Switch" />
+                        style="@style/TallGate.Switch"
+                        android:contentDescription="@string/switch_yt_shorts" />
                 </LinearLayout>
 
                 <View style="@style/TallGate.Divider" />
@@ -155,7 +156,8 @@
 
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchInstaReels"
-                        style="@style/TallGate.Switch" />
+                        style="@style/TallGate.Switch"
+                        android:contentDescription="@string/switch_insta_reels" />
                 </LinearLayout>
 
                 <View style="@style/TallGate.Divider" />
@@ -174,12 +176,13 @@
 
                         <TextView
                             style="@style/TallGate.RowSubtitle"
-                            android:text="@string/target_shorts" />
+                            android:text="@string/target_for_you" />
                     </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchTiktokFeed"
-                        style="@style/TallGate.Switch" />
+                        style="@style/TallGate.Switch"
+                        android:contentDescription="@string/switch_tiktok_feed" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">TallGate</string>
-    <string name="accessibility_service_description">TallGate는 인스타그램 릴스, 유튜브 쇼츠 등 도파민을 유발하는 무한 스크롤 숏폼 콘텐츠를 감지하여 자동으로 차단해주는 디지털 디톡스 도우미입니다.</string>
+    <string name="accessibility_service_description">TallGate는 인스타그램 릴스, 유튜브 쇼츠, 틱톡 추천 피드 등 도파민을 유발하는 무한 스크롤 숏폼 콘텐츠를 감지하여 자동으로 차단해주는 디지털 디톡스 도우미입니다.</string>
 
     <string name="header_title">tallgate</string>
     <string name="more_options">더보기</string>
@@ -15,6 +15,10 @@
     <string name="app_tiktok">TikTok</string>
     <string name="target_shorts">Shorts</string>
     <string name="target_reels">Reels</string>
+    <string name="target_for_you">For You</string>
+    <string name="switch_yt_shorts">YouTube Shorts 차단</string>
+    <string name="switch_insta_reels">Instagram Reels 차단</string>
+    <string name="switch_tiktok_feed">TikTok For You 차단</string>
 
     <string name="menu_insta_explore">Instagram 탐색 탭 차단</string>
     <string name="menu_haptic">차단 시 진동 알림</string>

@@ -5,6 +5,7 @@
     <color name="divider">#2A2A33</color>
     <color name="accent">#8E7CF3</color>
     <color name="on_accent">#FFFFFF</color>
+    <color name="on_accent_button">#0B0B10</color>
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#A1A1AD</color>
     <color name="switch_off_track">#4B4B53</color>

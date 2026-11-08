@@ -4,6 +4,8 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ComponentName
 import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -17,7 +19,13 @@ import android.widget.Toast
 class TallGateAccessibilityService : AccessibilityService() {
 
     private lateinit var prefs: BlockPreferences
+    private val handler = Handler(Looper.getMainLooper())
     private var lastBlockedAt = -DEBOUNCE_MS
+    private var lastScanAt = -SCAN_THROTTLE_MS
+    private var pendingScan: Trigger? = null
+    private val trailingScan = Runnable {
+        pendingScan?.let { scan(it) }
+    }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -28,27 +36,42 @@ class TallGateAccessibilityService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
-        if (SystemClock.elapsedRealtime() - lastBlockedAt < DEBOUNCE_MS) return
-        if (!prefs.isDisclosureAccepted) return
+        val trigger = Trigger(event.packageName?.toString() ?: return, event.eventType, event.className)
 
-        when (event.packageName?.toString()) {
-            PKG_INSTAGRAM -> handleInstagram(event)
-            PKG_YOUTUBE -> handleYouTube(event)
-            PKG_TIKTOK_GLOBAL, PKG_TIKTOK_ASIA -> handleTikTok(event)
+        val throttled = trigger.eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED &&
+            SystemClock.elapsedRealtime() - lastScanAt < SCAN_THROTTLE_MS
+        if (throttled) {
+            if (pendingScan == null) handler.postDelayed(trailingScan, SCAN_THROTTLE_MS)
+            pendingScan = trigger
+            return
+        }
+        scan(trigger)
+    }
+
+    private fun scan(trigger: Trigger) {
+        pendingScan = null
+        handler.removeCallbacks(trailingScan)
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastBlockedAt < DEBOUNCE_MS) return
+        if (!prefs.isDisclosureAccepted) return
+        lastScanAt = now
+
+        when (trigger.pkg) {
+            PKG_INSTAGRAM -> handleInstagram(trigger)
+            PKG_YOUTUBE -> handleYouTube(trigger)
+            PKG_TIKTOK_GLOBAL, PKG_TIKTOK_ASIA -> handleTikTok(trigger)
         }
     }
 
     /**
      * Window root for the event package. Null if an external window (launcher, system UI) is active.
      */
-    private fun rootFor(event: AccessibilityEvent): AccessibilityNodeInfo? {
-        val root = rootInActiveWindow ?: event.source ?: return null
-        return root.takeIf { it.packageName?.toString() == event.packageName?.toString() }
-    }
+    private fun rootFor(trigger: Trigger): AccessibilityNodeInfo? =
+        rootInActiveWindow?.takeIf { it.packageName?.toString() == trigger.pkg }
 
-    private fun handleInstagram(event: AccessibilityEvent) {
+    private fun handleInstagram(trigger: Trigger) {
         if (!prefs.isInstagramReelsBlocked && !prefs.isInstagramExploreBlocked) return
-        val root = rootFor(event) ?: return
+        val root = rootFor(trigger) ?: return
 
         // Bottom tab bar visible -> user is on a main tab (Home, Search, DM, Profile)
         val hasTabBar = root.findAccessibilityNodeInfosByViewId("$IG_ID/tab_bar").any { it.isVisibleToUser }
@@ -78,7 +101,7 @@ class TallGateAccessibilityService : AccessibilityService() {
         val hasVisibleClipsViewer =
             root.findAccessibilityNodeInfosByViewId("$IG_ID/clips_viewer_container").any { it.isVisibleToUser } ||
                 root.findAccessibilityNodeInfosByViewId("$IG_ID/clips_video_container").any { it.isVisibleToUser } ||
-                event.classNameContains("ClipsViewer", "ClipsActivity")
+                trigger.classNameContains("ClipsViewer", "ClipsActivity")
 
         if (hasVisibleClipsViewer) {
             Log.i(TAG, "Instagram: Reels viewer detected -> escaping with back")
@@ -129,13 +152,13 @@ class TallGateAccessibilityService : AccessibilityService() {
         }
     }
 
-    private fun handleYouTube(event: AccessibilityEvent) {
+    private fun handleYouTube(trigger: Trigger) {
         if (!prefs.isYouTubeShortsBlocked) return
-        val root = rootFor(event) ?: return
+        val root = rootFor(trigger) ?: return
 
         val isShortsScreen =
-            (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
-                event.classNameContains("ReelWatch", "ShortsPlayer")) ||
+            (trigger.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+                trigger.classNameContains("ReelWatch", "ShortsPlayer")) ||
                 root.findAccessibilityNodeInfosByViewId("$YT_ID/reel_watch_fragment_root").any { it.isVisibleToUser } ||
                 root.findAccessibilityNodeInfosByViewId("$YT_ID/reel_player_page_container").any { it.isVisibleToUser }
 
@@ -145,9 +168,9 @@ class TallGateAccessibilityService : AccessibilityService() {
         }
     }
 
-    private fun handleTikTok(event: AccessibilityEvent) {
+    private fun handleTikTok(trigger: Trigger) {
         if (!prefs.isTikTokFeedBlocked) return
-        val root = rootFor(event) ?: return
+        val root = rootFor(trigger) ?: return
 
         val isFeed = root.hasDeepNode(maxDepth = 8) { node ->
             val desc = node.desc
@@ -184,12 +207,14 @@ class TallGateAccessibilityService : AccessibilityService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        handler.removeCallbacks(trailingScan)
         isRunning = false
     }
 
     companion object {
         private const val TAG = "TallGateService"
         private const val DEBOUNCE_MS = 800L
+        private const val SCAN_THROTTLE_MS = 250L
 
         private const val PKG_INSTAGRAM = "com.instagram.android"
         private const val PKG_YOUTUBE = "com.google.android.youtube"
@@ -214,8 +239,10 @@ class TallGateAccessibilityService : AccessibilityService() {
         private val AccessibilityNodeInfo.desc get() = contentDescription?.toString()?.lowercase().orEmpty()
         private val AccessibilityNodeInfo.label get() = text?.toString()?.lowercase().orEmpty()
 
-        private fun AccessibilityEvent.classNameContains(vararg names: String) =
-            names.any { className?.contains(it, ignoreCase = true) == true }
+        private class Trigger(val pkg: String, val eventType: Int, val className: CharSequence?) {
+            fun classNameContains(vararg names: String) =
+                names.any { className?.contains(it, ignoreCase = true) == true }
+        }
 
         private fun AccessibilityNodeInfo.hasDeepNode(
             maxDepth: Int,

@@ -12,7 +12,7 @@
     <string name="accessibility_service_description">Detects and blocks short-form video feeds in Instagram, YouTube, and TikTok.</string>
 
     <string name="status_inactive_title">Accessibility permission required</string>
-    <string name="status_inactive_desc">TallGate requires Accessibility permission to detect and exit short-form video feeds. Tap to open settings.</string>
+    <string name="status_inactive_desc">TallGate requires Accessibility permission to detect and exit short-form video feeds. Tap to open settings. If the toggle is greyed out, open App info, tap the ⋮ menu, and choose Allow restricted settings.</string>
     <string name="btn_enable_accessibility">Open Accessibility Settings</string>
 
     <string name="section_apps">Blocked feeds</string>

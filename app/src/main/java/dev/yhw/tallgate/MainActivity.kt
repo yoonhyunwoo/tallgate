@@ -50,5 +50,6 @@ class MainActivity : AppCompatActivity() {
     private fun bind(toggle: MaterialSwitch, pref: KMutableProperty0<Boolean>) {
         toggle.isChecked = pref.get()
         toggle.setOnCheckedChangeListener { _, isChecked -> pref.set(isChecked) }
+        (toggle.parent as View).setOnClickListener { toggle.toggle() }
     }
 }

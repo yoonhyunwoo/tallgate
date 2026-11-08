@@ -19,4 +19,16 @@
     <string name="toast_blocked_explore">🚫 TallGate: 탐색 탭이 차단되었습니다.</string>
     <string name="toast_blocked_shorts">🚫 TallGate: 쇼츠가 차단되었습니다.</string>
     <string name="toast_blocked_tiktok">🚫 TallGate: 틱톡 추천 피드가 차단되었습니다.</string>
+
+    <string name="disclosure_title">접근성 권한을 켜기 전에</string>
+    <string name="disclosure_intro">TallGate는 안드로이드 접근성 API(AccessibilityService)를 사용해 숏폼 영상 화면을 감지하고 차단합니다. 계속하기 전에 사용 방식을 확인해 주세요.</string>
+    <string name="disclosure_access_title">접근하는 정보</string>
+    <string name="disclosure_access_body">Instagram, YouTube, TikTok이 열려 있는 동안 화면 구성 요소 정보(뷰 ID, 라벨, 선택된 탭 등)를 읽어 릴스, 쇼츠, For You 피드인지 판단합니다. 이 세 앱의 이벤트만 받습니다.</string>
+    <string name="disclosure_use_title">사용 목적</string>
+    <string name="disclosure_use_body">뒤로가기나 탭 전환 여부를 결정하고, 선택하신 진동이나 안내 메시지를 보여주는 데에만 사용합니다. 모든 처리는 기기 안에서 이루어집니다.</string>
+    <string name="disclosure_privacy_title">하지 않는 일</string>
+    <string name="disclosure_privacy_body">읽은 정보를 저장, 녹화, 공유하지 않으며, 앱에는 인터넷 권한이 없습니다.</string>
+    <string name="disclosure_footer">권한은 설정 &gt; 접근성에서 언제든 끌 수 있습니다. \'동의하고 계속\'을 누르면 접근성 설정으로 이동합니다.</string>
+    <string name="disclosure_agree">동의하고 계속</string>
+    <string name="disclosure_decline">거부</string>
 </resources>

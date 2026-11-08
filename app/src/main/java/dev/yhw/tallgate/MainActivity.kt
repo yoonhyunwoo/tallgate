@@ -15,10 +15,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val prefs = BlockPreferences(this)
+        if (!prefs.isDisclosureAccepted) {
+            startActivity(Intent(this, DisclosureActivity::class.java))
+            finish()
+            return
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val prefs = BlockPreferences(this)
         bind(binding.switchYtShorts, prefs::isYouTubeShortsBlocked)
         bind(binding.switchInstaReels, prefs::isInstagramReelsBlocked)
         bind(binding.switchInstaExplore, prefs::isInstagramExploreBlocked)

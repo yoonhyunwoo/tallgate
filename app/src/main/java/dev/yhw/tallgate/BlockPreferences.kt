@@ -14,6 +14,7 @@ class BlockPreferences(context: Context) {
     var isTikTokFeedBlocked by flag("key_tiktok_feed", true)
     var isHapticEnabled by flag("key_haptic", true)
     var isToastEnabled by flag("key_toast", true)
+    var isDisclosureAccepted by flag("key_disclosure_accepted", false)
 
     private fun flag(key: String, default: Boolean) = object : ReadWriteProperty<Any?, Boolean> {
         override fun getValue(thisRef: Any?, property: KProperty<*>) = prefs.getBoolean(key, default)

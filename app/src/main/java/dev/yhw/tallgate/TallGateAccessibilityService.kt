@@ -29,6 +29,7 @@ class TallGateAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
         if (SystemClock.elapsedRealtime() - lastBlockedAt < DEBOUNCE_MS) return
+        if (!prefs.isDisclosureAccepted) return
 
         when (event.packageName?.toString()) {
             PKG_INSTAGRAM -> handleInstagram(event)

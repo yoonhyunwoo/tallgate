@@ -20,6 +20,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".DisclosureActivity"
+            android:exported="false" />
+
         <service
             android:name=".TallGateAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"

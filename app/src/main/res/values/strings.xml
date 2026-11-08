@@ -29,4 +29,16 @@
     <string name="toast_blocked_explore">🚫 TallGate: Explore tab blocked.</string>
     <string name="toast_blocked_shorts">🚫 TallGate: Shorts blocked.</string>
     <string name="toast_blocked_tiktok">🚫 TallGate: TikTok For You feed blocked.</string>
+
+    <string name="disclosure_title">Before you turn on accessibility</string>
+    <string name="disclosure_intro">TallGate uses Android\'s AccessibilityService API to detect and block short-form video screens. Please read how it is used before continuing.</string>
+    <string name="disclosure_access_title">What it can access</string>
+    <string name="disclosure_access_body">While Instagram, YouTube, or TikTok is open, TallGate reads on-screen element information, such as view IDs, labels, and which tab is selected, to recognize Reels, Shorts, and For You feeds. It only receives events from these three apps.</string>
+    <string name="disclosure_use_title">How it is used</string>
+    <string name="disclosure_use_body">Only to decide whether to go back or switch tabs, and to show the vibration or message you chose. All of this happens on your device.</string>
+    <string name="disclosure_privacy_title">What it does not do</string>
+    <string name="disclosure_privacy_body">TallGate does not store, record, or share what it reads, and the app has no internet permission.</string>
+    <string name="disclosure_footer">You can turn the permission off at any time in Settings &gt; Accessibility. Tapping Agree takes you to the accessibility settings.</string>
+    <string name="disclosure_agree">Agree and continue</string>
+    <string name="disclosure_decline">Decline</string>
 </resources>

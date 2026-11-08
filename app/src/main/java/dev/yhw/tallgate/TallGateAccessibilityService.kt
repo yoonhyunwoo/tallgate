@@ -43,44 +43,54 @@ class TallGateAccessibilityService : AccessibilityService() {
     }
 
     private fun handleInstagram(root: AccessibilityNodeInfo, event: AccessibilityEvent) {
-        // [1] 절대 차단하면 안 되는 안전 영역 (DM 대화방, 프로필 등) 화이트리스트 검사
-        if (isInstagramSafeZone(root)) {
-            return
-        }
+        // [1] 릴스/탐색 탭 직접 클릭 이벤트 (홈 피드에 있든 어디에 있든 누르는 순간 즉각 방어)
+        if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
+            val viewId = event.source?.viewIdResourceName?.lowercase().orEmpty()
+            val desc = event.contentDescription?.toString()?.lowercase().orEmpty()
 
-        // [2] 릴스 탭 클릭 또는 릴스 탭 선택 감지
-        if (prefs.isInstagramReelsBlocked) {
-            // A. 하단 바의 릴스 탭이 선택되어 있는 경우 -> 홈(feed) 탭으로 부드럽게 자동 전환
-            val clipsTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_tab")
-            val isClipsTabSelected = clipsTabs.any { it.isSelected }
-
-            // B. 릴스 탭을 직접 클릭한 이벤트
-            val isClipsTabClicked = event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED &&
-                (event.source?.viewIdResourceName?.contains("clips_tab") == true ||
-                 event.contentDescription?.toString()?.equals("Reels", ignoreCase = true) == true ||
-                 event.contentDescription?.toString()?.equals("릴스", ignoreCase = true) == true)
-
-            if (isClipsTabSelected || isClipsTabClicked) {
-                Log.i(TAG, "Instagram Reels tab detected -> redirecting to Home feed")
+            if (prefs.isInstagramReelsBlocked && (viewId.contains("clips_tab") || desc == "reels" || desc == "릴스")) {
+                Log.i(TAG, "Instagram Reels tab clicked -> redirecting to Home feed")
                 redirectToInstagramHome(root, R.string.toast_blocked_reels)
                 return
             }
 
-            // C. 피드 등 외부에서 전체화면 릴스 뷰어(ClipsViewer)로 진입한 경우
-            // 주의: 인스타에서 '스토리(Stories)'는 내부적으로 reel_viewer라 불리므로 절대 차단하면 안 됨!
-            // 숏폼 릴스는 오직 'Clips' 또는 'clips_video_container' 키워드를 사용함.
-            val isStandaloneClipsViewer = event.classNameContains("ClipsViewer", "ClipsActivity") ||
-                root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_video_container").isNotEmpty() ||
-                root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_viewer_container").isNotEmpty()
+            if (prefs.isInstagramExploreBlocked && (viewId.contains("search_tab") || desc.contains("explore") || desc.contains("탐색"))) {
+                Log.i(TAG, "Instagram Explore tab clicked -> redirecting to Home feed")
+                redirectToInstagramHome(root, R.string.toast_blocked_explore)
+                return
+            }
+        }
 
-            if (isStandaloneClipsViewer) {
-                Log.i(TAG, "Instagram Standalone Clips Viewer detected -> escaping")
+        // [2] 안전 영역 검사: 홈 피드, DM, 프로필 화면에 머물고 있을 때는 절대 차단하지 않음!
+        // 홈 피드 내에 '추천 릴스' 카드나 캐러셀이 박혀 있어도 홈 피드 자체는 자유롭게 탐색 가능
+        if (isInstagramSafeZone(root)) {
+            return
+        }
+
+        // [3] 하단 바의 릴스 탭이 선택되어 있는 경우 -> 홈 탭으로 부드럽게 자동 전환
+        if (prefs.isInstagramReelsBlocked) {
+            val clipsTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_tab")
+            if (clipsTabs.any { it.isSelected }) {
+                Log.i(TAG, "Instagram Reels tab is selected -> redirecting to Home feed")
+                redirectToInstagramHome(root, R.string.toast_blocked_reels)
+                return
+            }
+
+            // [4] 홈 피드 밖에서 전체화면 릴스 뷰어(ClipsViewer)로 진입한 경우에만 뒤로가기 실행
+            // (주의: 하단 탭 바가 사라진 순수 전체화면 숏폼 플레이어 상태)
+            val hasClipsViewerContainer = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_viewer_container").isNotEmpty()
+            val hasClipsVideoNoTabBar = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/clips_video_container").isNotEmpty() &&
+                root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/tab_bar").isEmpty()
+            val classNameMatch = event.classNameContains("ClipsViewer", "ClipsActivity")
+
+            if (classNameMatch || hasClipsViewerContainer || hasClipsVideoNoTabBar) {
+                Log.i(TAG, "Instagram Standalone Clips Viewer detected! (classMatch=$classNameMatch, viewerContainer=$hasClipsViewerContainer, videoNoTabBar=$hasClipsVideoNoTabBar, className=${event.className}, eventType=${event.eventType}) -> escaping")
                 escapeWithBack(R.string.toast_blocked_reels)
                 return
             }
         }
 
-        // [3] 탐색(돋보기) 탭 차단
+        // [5] 탐색(돋보기) 탭 차단
         if (prefs.isInstagramExploreBlocked) {
             val searchTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/search_tab")
             if (searchTabs.any { it.isSelected }) {
@@ -92,16 +102,22 @@ class TallGateAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * DM 대화창, 스토리 뷰어, 프로필 등 차단하면 안 되는 안전 영역인지 확인
+     * 안전 영역 (홈 피드, DM 대화창, 프로필): 이 영역에서는 릴스 캐러셀 등이 보여도 홈을 차단하지 않음
      */
     private fun isInstagramSafeZone(root: AccessibilityNodeInfo): Boolean {
-        // DM 탭이 선택되어 있거나, DM 메시지 입력창/대화방에 있는 경우
+        // 1. 홈(feed) 탭이 선택되어 있는 경우 -> 홈 피드는 절대 차단하지 않음!
+        val feedTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/feed_tab")
+        if (feedTabs.any { it.isSelected }) {
+            Log.d(TAG, "SafeZone: feed_tab is selected")
+            return true
+        }
+
+        // 2. DM 탭이 선택되어 있거나, DM 메시지 대화방/입력창에 있는 경우
         val directTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/direct_tab")
         if (directTabs.any { it.isSelected }) {
             return true
         }
 
-        // DM 대화방 내부 요소들 (입력창, 메시지 리스트)
         if (root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/row_thread_composer").isNotEmpty() ||
             root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/row_thread_composer_edittext").isNotEmpty() ||
             root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/thread_title").isNotEmpty() ||
@@ -110,7 +126,7 @@ class TallGateAccessibilityService : AccessibilityService() {
             return true
         }
 
-        // 프로필 탭
+        // 3. 프로필 탭이 선택되어 있는 경우
         val profileTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/profile_tab")
         if (profileTabs.any { it.isSelected }) {
             return true
@@ -120,7 +136,7 @@ class TallGateAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * 릴스 탭에 있을 때 강제로 앱을 끄지 않고, 홈(feed) 탭을 대신 클릭해 평화롭게 메인으로 이동
+     * 릴스 탭에 있을 때 강제로 앱을 끄지 않고, 홈(feed) 탭을 대신 클릭해 평화롭게 메인으로 복귀
      */
     private fun redirectToInstagramHome(root: AccessibilityNodeInfo, toastRes: Int) {
         lastBlockedTimestamp = System.currentTimeMillis()
@@ -131,7 +147,6 @@ class TallGateAccessibilityService : AccessibilityService() {
         if (feedTab != null && !feedTab.isSelected) {
             feedTab.performAction(AccessibilityNodeInfo.ACTION_CLICK)
         } else {
-            // 홈 탭을 찾을 수 없거나 이미 홈인 경우에만 뒤로가기
             performGlobalAction(GLOBAL_ACTION_BACK)
         }
 
@@ -144,7 +159,6 @@ class TallGateAccessibilityService : AccessibilityService() {
     private fun handleYouTube(root: AccessibilityNodeInfo, event: AccessibilityEvent) {
         if (!prefs.isYouTubeShortsBlocked) return
 
-        // 유튜브 하단 쇼츠 탭 클릭 감지
         val isShortsClick = event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED &&
             (event.contentDescription?.toString()?.equals("Shorts", ignoreCase = true) == true ||
              event.contentDescription?.toString()?.equals("쇼츠", ignoreCase = true) == true)

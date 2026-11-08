@@ -1,32 +1,32 @@
 <resources>
-    <string name="app_name">TallGate</string>
-    <string name="accessibility_service_description">TallGate는 인스타그램 릴스, 유튜브 쇼츠, 틱톡 추천 피드 등 도파민을 유발하는 무한 스크롤 숏폼 콘텐츠를 감지하여 자동으로 차단해주는 디지털 디톡스 도우미입니다.</string>
+    <string name="app_name" translatable="false">TallGate</string>
+    <string name="header_title" translatable="false">tallgate</string>
+    <string name="app_instagram" translatable="false">Instagram</string>
+    <string name="app_youtube" translatable="false">YouTube</string>
+    <string name="app_tiktok" translatable="false">TikTok</string>
+    <string name="target_shorts" translatable="false">Shorts</string>
+    <string name="target_reels" translatable="false">Reels</string>
+    <string name="target_for_you" translatable="false">For You</string>
+    <string name="target_explore" translatable="false">Explore</string>
 
-    <string name="header_title">tallgate</string>
+    <string name="accessibility_service_description">TallGate is a digital detox helper that detects endless-scroll short-form content such as Instagram Reels, YouTube Shorts, and the TikTok For You feed, and blocks it automatically.</string>
 
-    <string name="status_inactive_title">접근성 서비스 권한 필요</string>
-    <string name="status_inactive_desc">숏폼 콘텐츠를 감지하고 차단하려면 접근성 권한이 필요합니다. 탭하여 설정으로 이동하세요.</string>
-    <string name="btn_enable_accessibility">권한 설정하러 가기</string>
+    <string name="status_inactive_title">Accessibility permission required</string>
+    <string name="status_inactive_desc">TallGate needs the accessibility permission to detect and block short-form content. Tap to open settings.</string>
+    <string name="btn_enable_accessibility">Open accessibility settings</string>
 
-    <string name="section_apps">차단 대상</string>
-    <string name="app_instagram">Instagram</string>
-    <string name="app_youtube">YouTube</string>
-    <string name="app_tiktok">TikTok</string>
-    <string name="target_shorts">Shorts</string>
-    <string name="target_reels">Reels</string>
-    <string name="target_for_you">For You</string>
-    <string name="target_explore">Explore</string>
-    <string name="switch_yt_shorts">YouTube Shorts 차단</string>
-    <string name="switch_insta_reels">Instagram Reels 차단</string>
-    <string name="switch_tiktok_feed">TikTok For You 차단</string>
-    <string name="switch_insta_explore">Instagram 탐색 탭 차단</string>
+    <string name="section_apps">Blocked apps</string>
+    <string name="switch_yt_shorts">Block YouTube Shorts</string>
+    <string name="switch_insta_reels">Block Instagram Reels</string>
+    <string name="switch_tiktok_feed">Block TikTok For You</string>
+    <string name="switch_insta_explore">Block Instagram Explore tab</string>
 
-    <string name="section_feedback">피드백 설정</string>
-    <string name="pref_haptic">차단 시 진동 알림</string>
-    <string name="pref_toast">차단 안내 메시지 표시</string>
+    <string name="section_feedback">Feedback</string>
+    <string name="pref_haptic">Vibrate when blocked</string>
+    <string name="pref_toast">Show a message when blocked</string>
 
-    <string name="toast_blocked_reels">🚫 TallGate: 릴스가 차단되었습니다.</string>
-    <string name="toast_blocked_explore">🚫 TallGate: 탐색 탭이 차단되었습니다.</string>
-    <string name="toast_blocked_shorts">🚫 TallGate: 쇼츠가 차단되었습니다.</string>
-    <string name="toast_blocked_tiktok">🚫 TallGate: 틱톡 추천 피드가 차단되었습니다.</string>
+    <string name="toast_blocked_reels">🚫 TallGate: Reels blocked.</string>
+    <string name="toast_blocked_explore">🚫 TallGate: Explore tab blocked.</string>
+    <string name="toast_blocked_shorts">🚫 TallGate: Shorts blocked.</string>
+    <string name="toast_blocked_tiktok">🚫 TallGate: TikTok For You feed blocked.</string>
 </resources>

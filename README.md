@@ -1,51 +1,41 @@
-# TallGate (숏폼 & 릴스 차단 도우미)
+# TallGate
 
-**TallGate**는 안드로이드의 접근성(Accessibility) 서비스를 활용하여 인스타그램 릴스, 유튜브 쇼츠, 틱톡 추천 피드 등 무한 스크롤 도파민 콘텐츠를 정밀 감지하고 차단하는 초경량 디지털 디톡스 도구입니다.
+안드로이드 접근성 서비스(Accessibility Service)를 이용해 인스타그램 릴스, 유튜브 쇼츠, 틱톡 추천 피드를 감지하고 차단하는 앱입니다. 원본 앱 변조 없이 화면 노드 트리 기반으로 동작합니다.
 
-SocialLite의 동작 메커니즘을 벤치마킹하여, **"각 앱별 차단 대상 기능만 딱 켜고 끌 수 있는 극도로 간편한 UI"**를 목표로 설계되었습니다.
+## 주요 기능
 
----
+- **Instagram**
+  - **릴스 차단**: 홈의 'For you' 탭 진입 시 'Feed' 탭으로 자동 전환, 전체화면 릴스 뷰어 감지 시 뒤로가기(`GLOBAL_ACTION_BACK`) 실행 (DM 채팅방 예외 처리).
+  - **탐색 탭 차단**: 돋보기(탐색) 탭 선택 시 홈 탭으로 복귀 (기본값: 꺼짐).
+- **YouTube**
+  - **쇼츠 차단**: 쇼츠 플레이어 진입 시 뒤로가기 실행.
+- **TikTok**
+  - **추천 피드 차단**: For You(추천) 피드 진입 시 뒤로가기 실행.
+- **피드백 설정**
+  - 차단 시 햅틱 진동 및 토스트 알림 (개별 On/Off 지원).
 
-## ✨ 핵심 기능
+## 동작 방식
 
-1. **📷 Instagram**
-   * **릴스 (Reels) 차단**: 홈 상단 `For you` 탭(릴스 뷰어가 임베드됨)을 `Feed` 탭으로 되돌리고, 탭 바가 없는 전체화면 릴스 뷰어는 시스템 뒤로가기(`GLOBAL_ACTION_BACK`)로 닫습니다.
-   * **탐색 (돋보기) 탭 차단**: 설정 메뉴(⋮)에서 켜면 탐색 탭 진입 시 홈 탭으로 복귀합니다. 기본값은 꺼짐입니다.
-2. **▶️ YouTube**
-   * **쇼츠 (Shorts) 차단**: 쇼츠 플레이어 화면(`reel_watch_fragment_root` 등)이 보이면 뒤로가기로 차단.
-3. **🎵 TikTok**
-   * **추천 피드 (For You) 차단**: 무한 스크롤 추천 피드 진입 차단.
-4. **⚙️ 피드백 설정**
-   * 차단 시 미세 진동(Haptic) 알림
-   * 차단 시 짧은 토스트(Toast) 팝업 안내
+`TallGateAccessibilityService`가 대상 앱의 윈도우 및 콘텐츠 변경 이벤트를 감지하여 처리합니다.
 
----
+1. **이벤트 필터링**: 대상 앱(`com.instagram.android`, `com.google.android.youtube`, TikTok)의 `TYPE_WINDOW_STATE_CHANGED`, `TYPE_WINDOW_CONTENT_CHANGED` 이벤트만 수신.
+2. **노드 검사**: 활성 윈도우 노드 트리에서 숏폼 고유 식별자(`clips_viewer_container`, `reel_watch_fragment_root` 등) 및 뷰 상태 탐색.
+3. **차단 및 복귀**: 조건 일치 시 탭 전환 또는 시스템 뒤로가기를 호출하고 디바운스(800ms) 적용.
 
-## 🏗️ 아키텍처 및 동작 원리
+## 빌드 및 설치
 
-* **접근성 서비스 (`TallGateAccessibilityService`)**:
-  * `com.instagram.android`, `com.google.android.youtube`, TikTok 패키지의 `typeWindowStateChanged`, `typeWindowContentChanged` 이벤트만 수신합니다.
-  * 이벤트를 낸 앱의 화면 노드 트리에서 숏폼 고유 식별자(`clips_viewer_container`, `reel_watch_fragment_root` 등)를 탐색합니다.
-  * 조건 일치 시 뒤로가기 또는 탭 클릭으로 복귀시키고 디바운스(800ms) 처리합니다.
-* **앱 변조 없음**:
-  * 인스타/유튜브 원본 APK를 변조하지 않습니다.
-* **설정 관리 (`BlockPreferences`)**:
-  * SharedPreferences 기반으로 사용자의 토글 상태를 실시간 저장/반영합니다.
+### 요구 사항
+- Android 8.0 (API 26) 이상
+- JDK 17 이상
 
----
+### 빌드
 
-## 🚀 빌드 및 실행 방법
-
-### Android Studio에서 실행
-1. Android Studio에서 프로젝트 폴더를 엽니다.
-2. USB로 연결된 삼성 갤럭시 S24 기기를 선택하고 `Run (Shift + F10)`을 누릅니다.
-3. 앱 설치 후 화면 상단의 **"권한 설정하러 가기"**를 눌러 안드로이드 설정 > 접근성 > 설치된 앱 > **TallGate**를 `사용(On)`으로 활성화합니다.
-
-### 터미널 CLI 빌드
 ```bash
 # 디버그 APK 빌드
 ./gradlew assembleDebug
 
-# 연결된 스마트폰에 설치
+# 기기 설치
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
+
+앱 설치 후 **설정 > 접근성 > 설치된 앱 > TallGate**에서 접근성 권한을 활성화해야 정상 동작합니다.

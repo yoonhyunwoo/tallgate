@@ -88,26 +88,7 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); letter-spacing: -.03em; line-heigh
 .card p { color: var(--muted); font-size: .96rem; }
 .card .tag { display: inline-block; margin-top: 12px; font-size: .75rem; color: var(--accent-2); background: rgba(142,124,243,.12); padding: 3px 10px; border-radius: 999px; }
 
-/* steps */
-.steps { counter-reset: s; display: grid; gap: 16px; }
-.step { display: grid; grid-template-columns: 52px 1fr; gap: 20px; background: var(--card); border-radius: var(--radius); padding: 26px 28px; }
-.step::before { counter-increment: s; content: counter(s); width: 44px; height: 44px; border-radius: 50%; background: rgba(142,124,243,.16); color: var(--accent-2); font-weight: 800; display: grid; place-items: center; }
-.step h3 { font-size: 1.08rem; margin-bottom: 6px; }
-.step p, .step li { color: var(--muted); font-size: .96rem; }
-.step ul { margin: 8px 0 0 18px; }
-.step code, .faq code { background: var(--card-2); border: 1px solid var(--line); padding: 1px 7px; border-radius: 6px; font-size: .88em; color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-.note { margin-top: 18px; border: 1px solid #5c4a1f; background: #2a2112; color: var(--warn); border-radius: 18px; padding: 18px 22px; font-size: .94rem; }
-.note b { color: #ffd98a; }
-.dl { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-
-/* faq */
-.faq { display: grid; gap: 10px; max-width: 800px; }
-details { background: var(--card); border-radius: 18px; padding: 0 24px; }
-summary { cursor: pointer; padding: 20px 0; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
-summary::-webkit-details-marker { display: none; }
-summary::after { content: "+"; color: var(--accent-2); font-size: 1.3rem; line-height: 1; }
-details[open] summary::after { content: "−"; }
-details p { color: var(--muted); padding-bottom: 20px; font-size: .96rem; }
+code { background: var(--card-2); border: 1px solid var(--line); padding: 1px 7px; border-radius: 6px; font-size: .88em; color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
 footer { border-top: 1px solid var(--line); padding: 40px 0 56px; color: var(--muted); font-size: .9rem; }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }

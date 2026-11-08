@@ -19,9 +19,7 @@
     <a class="brand" href="#top"><img src="assets/logo.svg" alt="">tallgate</a>
     <nav class="nav-links">
       <a href="#features">Features</a>
-      <a href="#how">How It Works</a>
-      <a href="#install">Installation</a>
-      <a href="#faq">FAQ</a>
+      <a href="https://github.com/yoonhyunwoo/tallgate">GitHub</a>
       <a class="btn btn-primary btn-sm" href="https://github.com/yoonhyunwoo/tallgate/releases/latest/download/TallGate.apk">Download</a>
     </nav>
   </div>
@@ -36,7 +34,7 @@
         <p class="lead">Automatically redirects or dismisses Instagram Reels, YouTube Shorts, and TikTok recommendation feeds the moment they open. Simple toggles, zero app modifications.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://github.com/yoonhyunwoo/tallgate/releases/latest/download/TallGate.apk">Download APK</a>
-          <a class="btn btn-ghost" href="#install">Installation Guide</a>
+          <a class="btn btn-ghost" href="https://github.com/yoonhyunwoo/tallgate">GitHub</a>
         </div>
         <p class="meta">Android 8.0+ · Distributed via GitHub Releases</p>
       </div>
@@ -124,124 +122,6 @@
           <h3>Zero Data Collection</h3>
           <p>Requires no internet permission and cannot transmit screen content off-device. All settings stay local.</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="how" style="background: var(--card); border-block: 1px solid var(--line);">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="kicker">How It Works</div>
-        <h2>Real-time UI inspection without app modifications</h2>
-        <p>TallGate uses Android's Accessibility Service to monitor specific view hierarchy components in supported apps.</p>
-      </div>
-      <div class="grid">
-        <div class="card" style="background: var(--bg);">
-          <div class="ico">1️⃣</div>
-          <h3>Filter</h3>
-          <p>Listens only to window state and content changes from Instagram, YouTube, and TikTok.</p>
-        </div>
-        <div class="card" style="background: var(--bg);">
-          <div class="ico">2️⃣</div>
-          <h3>Detect & Redirect</h3>
-          <p>Identifies short-form container IDs and triggers a tab switch or system back action.</p>
-        </div>
-        <div class="card" style="background: var(--bg);">
-          <div class="ico">3️⃣</div>
-          <h3>Debounce</h3>
-          <p>Applies an 800ms debounce cooldown to prevent loops, accompanied by optional haptic and toast alerts.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="install">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="kicker">Installation</div>
-        <h2>Sideloading Guide</h2>
-        <p>TallGate is distributed directly as an APK via GitHub Releases.</p>
-      </div>
-
-      <div class="steps">
-        <div class="step">
-          <div>
-            <h3>Download the APK</h3>
-            <p>Download <code>TallGate.apk</code> using your Android browser. Previous builds are available on the <a href="https://github.com/yoonhyunwoo/tallgate/releases" style="color: var(--accent-2); text-decoration: underline;">Releases page</a>.</p>
-            <div class="dl">
-              <a class="btn btn-primary" href="https://github.com/yoonhyunwoo/tallgate/releases/latest/download/TallGate.apk">Download TallGate.apk</a>
-              <a class="btn btn-ghost" href="https://github.com/yoonhyunwoo/tallgate/releases/latest">Release Notes</a>
-            </div>
-          </div>
-        </div>
-        <div class="step">
-          <div>
-            <h3>Allow Installation from Browser</h3>
-            <p>If prompted when opening the APK, tap <b>Settings</b> and enable <code>Allow from this source</code> for your browser or file manager.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div>
-            <h3>Install & Launch</h3>
-            <p>Tap <code>Install</code> and open TallGate. The home screen will show a banner indicating that the Accessibility Service is inactive.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div>
-            <h3>Enable Accessibility Service</h3>
-            <p>Tap the banner or <code>Enable Service</code> to open Android settings.</p>
-            <ul>
-              <li>Navigate to <b>Settings → Accessibility → Installed apps (or Downloaded apps) → TallGate</b> and switch it <code>On</code>.</li>
-              <li>Menu labels may vary slightly depending on device manufacturer.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="step">
-          <div>
-            <h3>Configure Rules</h3>
-            <p>Return to TallGate and toggle the feeds you want to block. Once enabled, blocking applies immediately.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="note">
-        <b>Accessibility switch greyed out?</b> On Android 13+, accessibility permissions for sideloaded apps are restricted by default.
-        Go to <b>Settings → Apps → TallGate → three-dot menu (⋮) → Allow restricted settings</b>, verify with PIN/biometrics, then return to Accessibility settings.
-      </div>
-    </div>
-  </section>
-
-  <section id="faq" style="padding-top: 0;">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="kicker">FAQ</div>
-        <h2>Frequently Asked Questions</h2>
-      </div>
-      <div class="faq">
-        <details>
-          <summary>Why does TallGate require Accessibility permissions?</summary>
-          <p>TallGate needs to inspect active view hierarchies to detect short-form containers and perform tab switches or back navigations. Android's Accessibility Service is the only official API capable of cross-app view inspection without root or app tampering. Events are strictly scoped to the three supported apps.</p>
-        </details>
-        <details>
-          <summary>Is any screen content or personal data transmitted?</summary>
-          <p>No. TallGate does not declare the INTERNET permission, making network communication impossible. Only your toggle settings are saved, entirely on-device.</p>
-        </details>
-        <details>
-          <summary>Why isn't TallGate on Google Play?</summary>
-          <p>Google Play policies heavily restrict Accessibility Service usage to assistive tools for people with disabilities. Because TallGate automates cross-app navigation, it is distributed independently via GitHub Releases.</p>
-        </details>
-        <details>
-          <summary>What happens when Instagram or YouTube updates?</summary>
-          <p>TallGate relies on specific UI view IDs and component names. If an app update modifies these internal IDs, blocking may temporarily fail until updated. If you notice a broken screen, please file an issue on GitHub with your app version.</p>
-        </details>
-        <details>
-          <summary>Does the service turn off after updating TallGate?</summary>
-          <p>If Android turns off the Accessibility Service after updating the APK, re-enable it in Accessibility settings. The in-app banner reflects current service status.</p>
-        </details>
-        <details>
-          <summary>How do I uninstall TallGate?</summary>
-          <p>Disable TallGate in Accessibility settings first, then uninstall it like any standard Android app.</p>
-        </details>
       </div>
     </div>
   </section>

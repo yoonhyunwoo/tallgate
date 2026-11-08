@@ -5,101 +5,56 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import com.google.android.material.materialswitch.MaterialSwitch
 import dev.yhw.tallgate.databinding.ActivityMainBinding
+import kotlin.reflect.KMutableProperty0
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var prefs: BlockPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        prefs = BlockPreferences.getInstance(this)
+        val prefs = BlockPreferences(this)
+        bind(binding.switchInstaReels, prefs::isInstagramReelsBlocked)
+        bind(binding.switchInstaExplore, prefs::isInstagramExploreBlocked)
+        bind(binding.switchYtShorts, prefs::isYouTubeShortsBlocked)
+        bind(binding.switchTiktokFeed, prefs::isTikTokFeedBlocked)
+        bind(binding.switchHaptic, prefs::isHapticEnabled)
+        bind(binding.switchToast, prefs::isToastEnabled)
 
-        initToggles()
-        setupListeners()
+        val openSettingsIfDisabled = View.OnClickListener {
+            if (!TallGateAccessibilityService.isServiceEnabled(this)) {
+                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            }
+        }
+        binding.cardStatus.setOnClickListener(openSettingsIfDisabled)
+        binding.btnEnableService.setOnClickListener(openSettingsIfDisabled)
     }
 
     override fun onResume() {
         super.onResume()
-        updateServiceStatus()
+        val enabled = TallGateAccessibilityService.isServiceEnabled(this)
+        val textColor = getColor(if (enabled) R.color.status_active_text else R.color.status_inactive_text)
+
+        binding.cardStatus.setCardBackgroundColor(
+            getColor(if (enabled) R.color.status_active_bg else R.color.status_inactive_bg)
+        )
+        binding.cardStatus.strokeColor =
+            getColor(if (enabled) R.color.status_active_stroke else R.color.status_inactive_stroke)
+        binding.tvStatusIcon.text = if (enabled) "🟢" else "⚠️"
+        binding.tvStatusTitle.setText(if (enabled) R.string.status_active_title else R.string.status_inactive_title)
+        binding.tvStatusTitle.setTextColor(textColor)
+        binding.tvStatusDesc.setText(if (enabled) R.string.status_active_desc else R.string.status_inactive_desc)
+        binding.tvStatusDesc.setTextColor(textColor)
+        binding.btnEnableService.visibility = if (enabled) View.GONE else View.VISIBLE
     }
 
-    private fun initToggles() {
-        binding.switchInstaReels.isChecked = prefs.isInstagramReelsBlocked
-        binding.switchInstaExplore.isChecked = prefs.isInstagramExploreBlocked
-        binding.switchYtShorts.isChecked = prefs.isYouTubeShortsBlocked
-        binding.switchTiktokFeed.isChecked = prefs.isTikTokFeedBlocked
-        binding.switchHaptic.isChecked = prefs.isHapticEnabled
-        binding.switchToast.isChecked = prefs.isToastEnabled
-    }
-
-    private fun setupListeners() {
-        binding.switchInstaReels.setOnCheckedChangeListener { _, isChecked ->
-            prefs.isInstagramReelsBlocked = isChecked
-        }
-
-        binding.switchInstaExplore.setOnCheckedChangeListener { _, isChecked ->
-            prefs.isInstagramExploreBlocked = isChecked
-        }
-
-        binding.switchYtShorts.setOnCheckedChangeListener { _, isChecked ->
-            prefs.isYouTubeShortsBlocked = isChecked
-        }
-
-        binding.switchTiktokFeed.setOnCheckedChangeListener { _, isChecked ->
-            prefs.isTikTokFeedBlocked = isChecked
-        }
-
-        binding.switchHaptic.setOnCheckedChangeListener { _, isChecked ->
-            prefs.isHapticEnabled = isChecked
-        }
-
-        binding.switchToast.setOnCheckedChangeListener { _, isChecked ->
-            prefs.isToastEnabled = isChecked
-        }
-
-        binding.btnEnableService.setOnClickListener {
-            openAccessibilitySettings()
-        }
-
-        binding.cardStatus.setOnClickListener {
-            if (!TallGateAccessibilityService.isServiceEnabled(this)) {
-                openAccessibilitySettings()
-            }
-        }
-    }
-
-    private fun updateServiceStatus() {
-        val isEnabled = TallGateAccessibilityService.isServiceEnabled(this)
-
-        if (isEnabled) {
-            binding.cardStatus.setCardBackgroundColor(ContextCompat.getColor(this, R.color.status_active_bg))
-            binding.cardStatus.strokeColor = ContextCompat.getColor(this, R.color.status_active_stroke)
-            binding.tvStatusIcon.text = "🟢"
-            binding.tvStatusTitle.text = getString(R.string.status_active_title)
-            binding.tvStatusTitle.setTextColor(ContextCompat.getColor(this, R.color.status_active_text))
-            binding.tvStatusDesc.text = getString(R.string.status_active_desc)
-            binding.tvStatusDesc.setTextColor(ContextCompat.getColor(this, R.color.status_active_text))
-            binding.btnEnableService.visibility = View.GONE
-        } else {
-            binding.cardStatus.setCardBackgroundColor(ContextCompat.getColor(this, R.color.status_inactive_bg))
-            binding.cardStatus.strokeColor = ContextCompat.getColor(this, R.color.status_inactive_stroke)
-            binding.tvStatusIcon.text = "⚠️"
-            binding.tvStatusTitle.text = getString(R.string.status_inactive_title)
-            binding.tvStatusTitle.setTextColor(ContextCompat.getColor(this, R.color.status_inactive_text))
-            binding.tvStatusDesc.text = getString(R.string.status_inactive_desc)
-            binding.tvStatusDesc.setTextColor(ContextCompat.getColor(this, R.color.status_inactive_text))
-            binding.btnEnableService.visibility = View.VISIBLE
-        }
-    }
-
-    private fun openAccessibilitySettings() {
-        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-        startActivity(intent)
+    private fun bind(toggle: MaterialSwitch, pref: KMutableProperty0<Boolean>) {
+        toggle.isChecked = pref.get()
+        toggle.setOnCheckedChangeListener { _, isChecked -> pref.set(isChecked) }
     }
 }

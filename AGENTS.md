@@ -3,7 +3,7 @@
 ## Build & Testing
 
 - Run Gradle from the repository root. Verification commands: `./gradlew :app:assembleDebug` and `:app:lintDebug` (no unit tests exist; UI and blocking behavior require on-device testing).
-- `gradle.properties` pins `org.gradle.java.home=/opt/homebrew/opt/openjdk@17`. Do not duplicate machine-specific paths; move to `~/.gradle/gradle.properties` if modifying.
+- Do not put machine-specific paths (e.g. `org.gradle.java.home`) in the repo `gradle.properties`; CI uses `setup-java` 25 and the path would break it. Keep them in `~/.gradle/gradle.properties`. CI (`.github/workflows/ci.yml`) runs the same `assembleDebug` + `lintDebug` pair. Toolchain: JDK 25, Gradle 9.6, AGP 9.5 (built-in Kotlin, so no `kotlin-android` plugin); bytecode target stays 17 via `compileOptions`.
 - `local.properties` (`sdk.dir`) is machine-specific and gitignored.
 
 ## View ID & Detection Logic

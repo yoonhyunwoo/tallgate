@@ -13,6 +13,8 @@ An Android app that detects and blocks Instagram Reels, YouTube Shorts, and the 
   - **For You feed blocking**: Triggers the system back action upon detecting the 'For You' feed.
 - **Feedback**
   - Configurable haptic feedback and toast notifications on block events.
+- **Privacy**
+  - Reads on-screen element info only from the supported apps, entirely on-device. Nothing is stored or shared, and the app declares no internet permission. A disclosure and consent screen is shown on first launch, and the service stays inactive until you accept.
 
 ## How It Works
 
@@ -26,7 +28,7 @@ An Android app that detects and blocks Instagram Reels, YouTube Shorts, and the 
 
 ### Requirements
 - Android 8.0 (API level 26) or higher
-- JDK 17+
+- JDK 17+ (CI and the maintainer build with JDK 25; Gradle 9.6, AGP 9.5)
 
 ### Build
 
@@ -38,4 +40,4 @@ An Android app that detects and blocks Instagram Reels, YouTube Shorts, and the 
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-After installation, enable the service under **Settings > Accessibility > Installed apps > TallGate**.
+On first launch, review and accept the accessibility disclosure. The app then opens accessibility settings; enable the service under **Settings > Accessibility > Installed apps > TallGate**.

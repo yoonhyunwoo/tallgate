@@ -9,36 +9,36 @@
     <string name="target_for_you" translatable="false">For You</string>
     <string name="target_explore" translatable="false">Explore</string>
 
-    <string name="accessibility_service_description">TallGate is a digital detox helper that detects endless-scroll short-form content such as Instagram Reels, YouTube Shorts, and the TikTok For You feed, and blocks it automatically.</string>
+    <string name="accessibility_service_description">Detects and blocks short-form video feeds in Instagram, YouTube, and TikTok.</string>
 
     <string name="status_inactive_title">Accessibility permission required</string>
-    <string name="status_inactive_desc">TallGate needs the accessibility permission to detect and block short-form content. Tap to open settings.</string>
-    <string name="btn_enable_accessibility">Open accessibility settings</string>
+    <string name="status_inactive_desc">TallGate requires Accessibility permission to detect and exit short-form video feeds. Tap to open settings.</string>
+    <string name="btn_enable_accessibility">Open Accessibility Settings</string>
 
-    <string name="section_apps">Blocked apps</string>
+    <string name="section_apps">Blocked feeds</string>
     <string name="switch_yt_shorts">Block YouTube Shorts</string>
     <string name="switch_insta_reels">Block Instagram Reels</string>
     <string name="switch_tiktok_feed">Block TikTok For You</string>
     <string name="switch_insta_explore">Block Instagram Explore tab</string>
 
     <string name="section_feedback">Feedback</string>
-    <string name="pref_haptic">Vibrate when blocked</string>
-    <string name="pref_toast">Show a message when blocked</string>
+    <string name="pref_haptic">Vibrate on block</string>
+    <string name="pref_toast">Show toast alert</string>
 
-    <string name="toast_blocked_reels">🚫 TallGate: Reels blocked.</string>
-    <string name="toast_blocked_explore">🚫 TallGate: Explore tab blocked.</string>
-    <string name="toast_blocked_shorts">🚫 TallGate: Shorts blocked.</string>
-    <string name="toast_blocked_tiktok">🚫 TallGate: TikTok For You feed blocked.</string>
+    <string name="toast_blocked_reels">Reels blocked</string>
+    <string name="toast_blocked_explore">Explore tab blocked</string>
+    <string name="toast_blocked_shorts">Shorts blocked</string>
+    <string name="toast_blocked_tiktok">TikTok feed blocked</string>
 
-    <string name="disclosure_title">Before you turn on accessibility</string>
-    <string name="disclosure_intro">TallGate uses Android\'s AccessibilityService API to detect and block short-form video screens. Please read how it is used before continuing.</string>
-    <string name="disclosure_access_title">What it can access</string>
-    <string name="disclosure_access_body">While Instagram, YouTube, or TikTok is open, TallGate reads on-screen element information, such as view IDs, labels, and which tab is selected, to recognize Reels, Shorts, and For You feeds. It only receives events from these three apps.</string>
-    <string name="disclosure_use_title">How it is used</string>
-    <string name="disclosure_use_body">Only to decide whether to go back or switch tabs, and to show the vibration or message you chose. All of this happens on your device.</string>
-    <string name="disclosure_privacy_title">What it does not do</string>
-    <string name="disclosure_privacy_body">TallGate does not store, record, or share what it reads, and the app has no internet permission.</string>
-    <string name="disclosure_footer">You can turn the permission off at any time in Settings &gt; Accessibility. Tapping Agree takes you to the accessibility settings.</string>
-    <string name="disclosure_agree">Agree and continue</string>
+    <string name="disclosure_title">Accessibility Disclosure</string>
+    <string name="disclosure_intro">TallGate uses Android\'s AccessibilityService API to detect and exit short-form video feeds in supported apps.</string>
+    <string name="disclosure_access_title">Information Accessed</string>
+    <string name="disclosure_access_body">While Instagram, YouTube, or TikTok is active, TallGate inspects UI node identifiers, view labels, and selected tabs to identify short-form screens. Events from all other apps are ignored.</string>
+    <string name="disclosure_use_title">Purpose &amp; Actions</string>
+    <string name="disclosure_use_body">Used solely to perform back navigation or tab switches away from short-form feeds, and to trigger configured haptic or toast feedback.</string>
+    <string name="disclosure_privacy_title">Privacy &amp; Data Safety</string>
+    <string name="disclosure_privacy_body">No screen content or personal data is collected, stored, or shared. TallGate does not request internet permission and cannot transmit data off-device.</string>
+    <string name="disclosure_footer">You can disable this permission at any time in system settings.</string>
+    <string name="disclosure_agree">Accept and Continue</string>
     <string name="disclosure_decline">Decline</string>
 </resources>

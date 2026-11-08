@@ -23,7 +23,7 @@ class TallGateAccessibilityService : AccessibilityService() {
         super.onServiceConnected()
         prefs = BlockPreferences(this)
         isRunning = true
-        Log.i(TAG, "TallGateAccessibilityService Connected and listening")
+        Log.i(TAG, "Service connected")
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -39,7 +39,7 @@ class TallGateAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * 이벤트를 발생시킨 앱의 윈도우 루트. 다른 앱 윈도우(런처, 시스템 UI)가 활성 상태면 null.
+     * Window root for the event package. Null if an external window (launcher, system UI) is active.
      */
     private fun rootFor(event: AccessibilityEvent): AccessibilityNodeInfo? {
         val root = rootInActiveWindow ?: event.source ?: return null
@@ -50,13 +50,13 @@ class TallGateAccessibilityService : AccessibilityService() {
         if (!prefs.isInstagramReelsBlocked && !prefs.isInstagramExploreBlocked) return
         val root = rootFor(event) ?: return
 
-        // 하단 탭 바가 보이면 메인 탭(홈, DM, 탐색, 프로필)에 있는 상태
+        // Bottom tab bar visible -> user is on a main tab (Home, Search, DM, Profile)
         val hasTabBar = root.findAccessibilityNodeInfosByViewId("$IG_ID/tab_bar").any { it.isVisibleToUser }
 
         if (hasTabBar) {
-            // 홈의 'For you' 탭은 릴스 뷰어(clips_viewer_container)를 그대로 임베드하므로 'Feed' 탭으로 되돌림
+            // Home 'For you' tab embeds Reels viewer; switch back to 'Feed' tab
             if (prefs.isInstagramReelsBlocked && switchHomeToFeedTab(root)) {
-                Log.i(TAG, "Home 'For you' tab (embedded reels) -> switching to Feed tab")
+                Log.i(TAG, "Instagram: switching 'For you' tab to Feed")
                 announceBlock(R.string.toast_blocked_reels)
                 return
             }
@@ -64,15 +64,15 @@ class TallGateAccessibilityService : AccessibilityService() {
             if (prefs.isInstagramExploreBlocked &&
                 root.findAccessibilityNodeInfosByViewId("$IG_ID/search_tab").any { it.isSelected }
             ) {
-                Log.i(TAG, "Explore tab is selected -> redirecting to Home feed")
+                Log.i(TAG, "Instagram: redirecting Explore tab to Home feed")
                 redirectToInstagramHome(root, R.string.toast_blocked_explore)
             }
             return
         }
 
-        // 하단 탭 바가 사라진 상태 -> 전체화면 세로 숏폼 뷰어(ClipsViewer)인지 검사
+        // Tab bar hidden -> check for standalone fullscreen Reels viewer
         if (!prefs.isInstagramReelsBlocked) return
-        // DM 대화방 내부(메시지 입력창)는 보호
+        // Preserve active DM chat thread
         if (isInstagramDmRoom(root)) return
 
         val hasVisibleClipsViewer =
@@ -81,13 +81,13 @@ class TallGateAccessibilityService : AccessibilityService() {
                 event.classNameContains("ClipsViewer", "ClipsActivity")
 
         if (hasVisibleClipsViewer) {
-            Log.i(TAG, "Fullscreen Standalone Reels Viewer detected (no tab bar) -> escaping with back")
+            Log.i(TAG, "Instagram: Reels viewer detected -> escaping with back")
             escapeWithBack(R.string.toast_blocked_reels)
         }
     }
 
     /**
-     * 홈 상단 탭 스트립(Feed / For you)에서 첫 번째가 아닌 탭이 선택되어 있으면 첫 번째(Feed) 탭을 눌러 복귀
+     * Switches to the first tab ('Feed') if an alternative tab is selected in the home tab strip.
      */
     private fun switchHomeToFeedTab(root: AccessibilityNodeInfo): Boolean {
         val strip = root.findAccessibilityNodeInfosByViewId("$IG_ID/merged_feeds_static_tab_strip")
@@ -101,7 +101,7 @@ class TallGateAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * DM 대화방(채팅창) 내부인지 확인
+     * Checks if the active view belongs to an Instagram DM chat room.
      */
     private fun isInstagramDmRoom(root: AccessibilityNodeInfo): Boolean {
         return listOf("row_thread_composer", "row_thread_composer_edittext", "thread_title", "direct_text_edit_text")
@@ -109,7 +109,7 @@ class TallGateAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * 현재 탭에서 홈 탭을 대신 클릭해 메인 피드로 복귀. 홈 탭을 못 찾으면 뒤로가기.
+     * Clicks the Home tab to return to the main feed, falling back to global back navigation.
      */
     private fun redirectToInstagramHome(root: AccessibilityNodeInfo, toastRes: Int) {
         val homeTab = root.findAccessibilityNodeInfosByViewId("$IG_ID/feed_switcher").firstOrNull()
@@ -140,7 +140,7 @@ class TallGateAccessibilityService : AccessibilityService() {
                 root.findAccessibilityNodeInfosByViewId("$YT_ID/reel_player_page_container").any { it.isVisibleToUser }
 
         if (isShortsScreen) {
-            Log.i(TAG, "YouTube Shorts detected -> escaping")
+            Log.i(TAG, "YouTube: Shorts detected -> escaping with back")
             escapeWithBack(R.string.toast_blocked_shorts)
         }
     }
@@ -156,7 +156,7 @@ class TallGateAccessibilityService : AccessibilityService() {
         }
 
         if (isFeed) {
-            Log.i(TAG, "TikTok For-You feed detected -> escaping")
+            Log.i(TAG, "TikTok: For You feed detected -> escaping with back")
             escapeWithBack(R.string.toast_blocked_tiktok)
         }
     }

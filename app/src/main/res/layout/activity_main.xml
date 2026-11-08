@@ -28,7 +28,6 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- Service status -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardStatus"
             android:layout_width="match_parent"
@@ -93,7 +92,6 @@
             android:layout_marginTop="28dp"
             android:text="@string/section_apps" />
 
-        <!-- Instagram -->
         <com.google.android.material.card.MaterialCardView
             style="@style/TallGate.Card"
             android:layout_marginBottom="14dp">
@@ -158,7 +156,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- YouTube -->
         <com.google.android.material.card.MaterialCardView
             style="@style/TallGate.Card"
             android:layout_marginBottom="14dp">
@@ -203,7 +200,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- TikTok -->
         <com.google.android.material.card.MaterialCardView
             style="@style/TallGate.Card"
             android:layout_marginBottom="14dp">
@@ -253,7 +249,6 @@
             android:layout_marginTop="20dp"
             android:text="@string/section_preferences" />
 
-        <!-- Preferences -->
         <com.google.android.material.card.MaterialCardView style="@style/TallGate.Card">
 
             <LinearLayout style="@style/TallGate.CardBody">

@@ -107,14 +107,16 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAgree"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
             android:text="@string/disclosure_agree" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDecline"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
             android:text="@string/disclosure_decline"
             android:textColor="@color/text_secondary" />
     </LinearLayout>

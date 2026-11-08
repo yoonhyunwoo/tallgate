@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (!::binding.isInitialized) return
         binding.cardStatus.visibility =
             if (TallGateAccessibilityService.isServiceEnabled(this)) View.GONE else View.VISIBLE
     }

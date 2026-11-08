@@ -28,7 +28,7 @@ An Android app that detects and blocks Instagram Reels, YouTube Shorts, and the 
 
 ### Requirements
 - Android 8.0 (API level 26) or higher
-- JDK 17+ (CI and the maintainer build with JDK 25; Gradle 9.6, AGP 9.5)
+- JDK 17+ (CI and the maintainer build with JDK 25; Gradle 9.8, AGP 9.5)
 
 ### Build
 
@@ -41,3 +41,5 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
 On first launch, review and accept the accessibility disclosure. The app then opens accessibility settings; enable the service under **Settings > Accessibility > Installed apps > TallGate**.
+
+On Android 13+, a sideloaded APK may have the accessibility toggle greyed out. If so, open **Settings > Apps > TallGate**, tap the **⋮** menu, choose **Allow restricted settings**, then enable the service again.

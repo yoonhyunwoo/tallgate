@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand colors -->
+    <color name="primary">#1E293B</color>
+    <color name="primary_variant">#0F172A</color>
+    <color name="secondary">#3B82F6</color>
+    <color name="accent_green">#10B981</color>
+    <color name="accent_amber">#F59E0B</color>
+    <color name="accent_red">#EF4444</color>
+
+    <!-- Background and surface -->
+    <color name="bg_light">#F8FAFC</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="card_stroke">#E2E8F0</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_muted">#94A3B8</color>
+
+    <!-- Status cards -->
+    <color name="status_active_bg">#ECFDF5</color>
+    <color name="status_active_stroke">#A7F3D0</color>
+    <color name="status_active_text">#065F46</color>
+
+    <color name="status_inactive_bg">#FEF3C7</color>
+    <color name="status_inactive_stroke">#FDE68A</color>
+    <color name="status_inactive_text">#92400E</color>
+
+    <!-- App specific icons/tags -->
+    <color name="brand_instagram">#E1306C</color>
+    <color name="brand_youtube">#FF0000</color>
+    <color name="brand_tiktok">#000000</color>
+</resources>

@@ -83,7 +83,6 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); letter-spacing: -.03em; line-heigh
 .grid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
 .card { background: var(--card); border-radius: var(--radius); padding: 28px; border: 1px solid transparent; }
 .card:hover { border-color: var(--line); }
-.card .ico { font-size: 1.6rem; margin-bottom: 14px; }
 .card h3 { font-size: 1.1rem; margin-bottom: 8px; letter-spacing: -.01em; }
 .card p { color: var(--muted); font-size: .96rem; }
 .card .tag { display: inline-block; margin-top: 12px; font-size: .75rem; color: var(--accent-2); background: rgba(142,124,243,.12); padding: 3px 10px; border-radius: 999px; }
@@ -93,6 +92,15 @@ code { background: var(--card-2); border: 1px solid var(--line); padding: 1px 7p
 footer { border-top: 1px solid var(--line); padding: 40px 0 56px; color: var(--muted); font-size: .9rem; }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
 footer a:hover { color: var(--text); }
+
+/* document pages (privacy) */
+.doc { padding: 64px 0 24px; max-width: 760px; }
+.doc h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 8px; }
+.doc h2 { font-size: 1.15rem; margin: 30px 0 8px; letter-spacing: -.01em; }
+.doc p { color: var(--muted); }
+.doc a { color: var(--accent-2); text-decoration: underline; }
+.doc .meta { margin: 0 0 8px; }
+.doc + .doc { border-top: 1px solid var(--line); margin-top: 40px; padding-top: 64px; }
 
 @media (max-width: 860px) {
   .hero { padding-top: 56px; }

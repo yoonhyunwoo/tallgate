@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TallGate · Short-Form Video Blocker for Android</title>
-  <meta name="description" content="TallGate detects and blocks Instagram Reels, YouTube Shorts, and the TikTok recommendation feed using Android's Accessibility Service. No APK tampering, no data collection.">
+  <meta name="description" content="Block Instagram Reels, YouTube Shorts, and the TikTok For You feed on Android with no root, no modified APKs, and no data collection.">
   <meta name="theme-color" content="#0b0b10">
   <meta property="og:title" content="TallGate · Short-Form Video Blocker for Android">
-  <meta property="og:description" content="Block Instagram Reels, YouTube Shorts, and TikTok recommendation feeds on Android.">
+  <meta property="og:description" content="Block Instagram Reels, YouTube Shorts, and the TikTok For You feed on Android.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://yoonhyunwoo.github.io/tallgate/assets/icon-512.png">
   <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
@@ -32,9 +32,9 @@
   <div class="hero">
     <div class="wrap">
       <div>
-        <span class="eyebrow">Android · Accessibility Service</span>
-        <h1>Block short-form feeds<br><em>at the door</em>.</h1>
-        <p class="lead">Automatically redirects or dismisses Instagram Reels, YouTube Shorts, and TikTok recommendation feeds the moment they open. Simple toggles, zero app modifications.</p>
+        <span class="eyebrow">Android · Accessibility service</span>
+        <h1>Block short-form feeds<br><em>before they start</em>.</h1>
+        <p class="lead">Redirects or exits Instagram Reels, YouTube Shorts, and the TikTok For You feed the moment they open. No root, no patched APKs, and no network access.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://github.com/yoonhyunwoo/tallgate/releases/latest/download/TallGate.apk">Download APK</a>
           <a class="btn btn-ghost" href="https://github.com/yoonhyunwoo/tallgate">GitHub</a>
@@ -47,7 +47,7 @@
           <div class="status"><span>10:24</span><span>100%</span></div>
           <div class="app-head"><img src="assets/logo.svg" alt="">tallgate</div>
           <div class="panel">
-            <h4>Blocked Feeds</h4>
+            <h4>Blocked feeds</h4>
             <div class="row">
               <div class="ic yt" aria-hidden="true">▶</div>
               <div class="t"><b>YouTube</b><span>Shorts</span></div>
@@ -72,12 +72,12 @@
           <div class="panel">
             <h4>Feedback</h4>
             <div class="row">
-              <div class="t"><b>Vibration on block</b></div>
-              <button class="sw" role="switch" aria-checked="true" aria-label="Vibration on block"></button>
+              <div class="t"><b>Vibrate on block</b></div>
+              <button class="sw" role="switch" aria-checked="true" aria-label="Vibrate on block"></button>
             </div>
             <div class="row">
-              <div class="t"><b>Toast alert on block</b></div>
-              <button class="sw" role="switch" aria-checked="true" aria-label="Toast alert on block"></button>
+              <div class="t"><b>Show toast alert</b></div>
+              <button class="sw" role="switch" aria-checked="true" aria-label="Show toast alert"></button>
             </div>
           </div>
         </div>
@@ -89,41 +89,35 @@
     <div class="wrap">
       <div class="sec-head">
         <div class="kicker">Features</div>
-        <h2>Granular control over what gets blocked</h2>
-        <p>Toggle individual short-form features per app. Regular feeds, search, and active DM chats remain intact.</p>
+        <h2>Choose what gets blocked</h2>
+        <p>Toggle blocking per feed. Following feeds, search, and direct messages keep working normally.</p>
       </div>
       <div class="grid">
         <div class="card">
-          <div class="ico" aria-hidden="true">📷</div>
           <h3>Instagram Reels</h3>
-          <p>Redirects the home <code>For you</code> tab back to <code>Feed</code> and closes fullscreen Reels viewers using the system back action.</p>
-          <span class="tag">DM chats excluded</span>
+          <p>Redirects the home <code>For you</code> tab back to <code>Feed</code> and closes fullscreen Reels with the system back action.</p>
+          <span class="tag">Preserves DM chats</span>
         </div>
         <div class="card">
-          <div class="ico" aria-hidden="true">🔍</div>
           <h3>Instagram Explore</h3>
-          <p>Redirects back to the home feed when the Explore (Search) tab is opened. Disabled by default.</p>
-          <span class="tag">Optional</span>
+          <p>Redirects back to the home feed when the Explore tab is opened.</p>
+          <span class="tag">Disabled by default</span>
         </div>
         <div class="card">
-          <div class="ico" aria-hidden="true">▶️</div>
           <h3>YouTube Shorts</h3>
-          <p>Immediately navigates back when the Shorts player is launched. Standard videos play normally.</p>
+          <p>Triggers the system back action when the Shorts player opens. Standard videos play normally.</p>
         </div>
         <div class="card">
-          <div class="ico" aria-hidden="true">🎵</div>
-          <h3>TikTok For You Feed</h3>
-          <p>Exits the endless For You recommendation feed upon entry.</p>
+          <h3>TikTok For You feed</h3>
+          <p>Exits the For You feed upon entry. Following and profile tabs remain accessible.</p>
         </div>
         <div class="card">
-          <div class="ico" aria-hidden="true">📳</div>
-          <h3>Haptic & Toast Alerts</h3>
-          <p>Provides subtle vibration and brief toast notifications on block events, individually configurable.</p>
+          <h3>Haptic and toast alerts</h3>
+          <p>Configurable vibration and brief toast notifications whenever a feed is blocked.</p>
         </div>
         <div class="card">
-          <div class="ico" aria-hidden="true">🔒</div>
-          <h3>Zero Data Collection</h3>
-          <p>Requires no internet permission and cannot transmit screen content off-device. All settings stay local.</p>
+          <h3>Zero data collection</h3>
+          <p>Requests no internet permission and cannot transmit screen content off-device. All settings stay local.</p>
         </div>
       </div>
     </div>
@@ -136,6 +130,7 @@
     <span>
       <a href="https://github.com/yoonhyunwoo/tallgate">GitHub</a> ·
       <a href="https://github.com/yoonhyunwoo/tallgate/releases">Releases</a> ·
+      <a href="privacy.html">Privacy</a> ·
       <a href="https://github.com/yoonhyunwoo/tallgate/issues">Issues</a>
     </span>
   </div>

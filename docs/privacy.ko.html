@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>개인정보처리방침 · TallGate</title>
+  <meta name="description" content="TallGate 개인정보처리방침. 개인정보와 화면 내용을 수집, 전송, 공유하지 않으며 앱에 인터넷 권한이 없습니다.">
+  <meta name="theme-color" content="#0b0b10">
+  <link rel="alternate" hreflang="en" href="https://yoonhyunwoo.github.io/tallgate/privacy.html">
+  <link rel="alternate" hreflang="ko" href="https://yoonhyunwoo.github.io/tallgate/privacy.ko.html">
+  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="assets/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="">tallgate</a>
+    <nav class="nav-links">
+      <a href="privacy.html" hreflang="en" lang="en">English</a>
+      <a href="privacy.ko.html" hreflang="ko" lang="ko" aria-current="page">한국어</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <article class="wrap doc">
+    <h1>개인정보처리방침</h1>
+    <p class="meta">시행일: 2026-11-09</p>
+
+    <h2>데이터 수집 및 네트워크 통신 없음</h2>
+    <p>TallGate는 어떠한 개인정보나 화면 내용도 수집, 전송, 공유하지 않습니다. 앱은 인터넷 권한(<code>android.permission.INTERNET</code>)을 요청하지 않으며 네트워크 통신 기능 자체가 없습니다. 분석 도구, 광고 라이브러리, 트래커 SDK를 포함하지 않습니다.</p>
+
+    <h2>접근성 서비스 사용 목적 및 방식</h2>
+    <p>TallGate는 Instagram, YouTube, TikTok에서 숏폼 영상 피드를 감지해 벗어나는 목적으로만 Android 접근성 서비스(AccessibilityService) API를 사용합니다. 지원 대상 앱이 실행 중일 때만 UI 노드 식별자, 뷰 라벨, 선택된 탭을 메모리에서 확인해 숏폼 화면 여부를 판단합니다. 숏폼 화면이 감지되면 뒤로 가기 또는 기본 피드 탭 전환을 수행하고, 설정된 진동·토스트 알림을 제공합니다. 확인한 정보는 메모리에서 일시적으로만 쓰이며 기록, 로그 저장, 보관되지 않습니다. 그 외 다른 앱의 이벤트는 수신하지 않습니다.</p>
+
+    <h2>기기 내 저장 및 제어권</h2>
+    <p>기기에는 사용자의 설정값만 저장됩니다: 피드별 차단 여부, 진동·토스트 알림 설정, 접근성 권한 동의 여부입니다. 이 값은 기기 내 앱 전용 저장소에 보관되며 앱을 삭제하거나 데이터를 지우면 함께 삭제됩니다. Android 설정에서 언제든 접근성 서비스를 끌 수 있으며, 끄는 즉시 모든 감지 동작이 중단됩니다.</p>
+
+    <h2>방침 변경 및 문의</h2>
+    <p>방침이 변경되면 이 페이지에 변경 내용과 시행일을 게시합니다. 문의 사항이나 버그 제보는 <a href="https://github.com/yoonhyunwoo/tallgate/issues">github.com/yoonhyunwoo/tallgate/issues</a>에 등록해 주세요.</p>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© TallGate</span>
+    <span>
+      <a href="index.html">Home</a> ·
+      <a href="https://github.com/yoonhyunwoo/tallgate">GitHub</a> ·
+      <a href="https://github.com/yoonhyunwoo/tallgate/releases">Releases</a> ·
+      <a href="https://github.com/yoonhyunwoo/tallgate/issues">Issues</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>

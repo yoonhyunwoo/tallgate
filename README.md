@@ -43,3 +43,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 On first launch, review and accept the accessibility disclosure. The app then opens accessibility settings; enable the service under **Settings > Accessibility > Installed apps > TallGate**.
 
 On Android 13+, a sideloaded APK may have the accessibility toggle greyed out. If so, open **Settings > Apps > TallGate**, tap the **⋮** menu, choose **Allow restricted settings**, then enable the service again.
+
+## License
+
+TallGate is licensed under the [GNU General Public License v3.0](LICENSE).

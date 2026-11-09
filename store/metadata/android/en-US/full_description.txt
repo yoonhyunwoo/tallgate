@@ -1,0 +1,26 @@
+TallGate exits short-form video feeds the moment they open, helping you avoid unintentional video scrolling.
+
+[Supported feeds]
+• Instagram: redirects the home 'For you' tab back to 'Feed' and closes fullscreen Reels with the system back action. Active DM chats are preserved.
+• Instagram Explore: redirects back to the home feed when the Explore tab is opened (disabled by default).
+• YouTube Shorts: exits the Shorts player immediately using the system back action. Standard videos play normally.
+• TikTok: exits the 'For You' feed upon entry.
+
+[Features and privacy]
+• Per-feed controls: turn blocking on or off independently for each supported feed.
+• Block alerts: optional vibration and brief toast notifications whenever a feed is dismissed.
+• No network access: TallGate omits the android.permission.INTERNET permission. No data leaves your device, and there are no accounts, advertisements, or analytics trackers.
+• Local storage: your preferences stay strictly in private app storage on your device.
+
+[Accessibility service disclosure]
+TallGate uses Android's AccessibilityService API to detect and exit short-form video feeds in supported apps.
+
+• Information accessed: while Instagram, YouTube, or TikTok is active, TallGate inspects UI node identifiers, view labels, and tab selection states to identify short-form screens. Events from all other apps are ignored.
+• Actions taken: performs a system back action or switches to the standard feed tab when a short-form screen is detected, and triggers your configured alert.
+• Data protection: TallGate does not capture, record, log, or transmit on-screen content or personal information. Evaluation occurs in memory only.
+
+The service requires explicit consent before activation and can be disabled at any time in Android Settings > Accessibility > TallGate.
+
+[Requirements and disclaimer]
+• Android 8.0 or later.
+• TallGate is an independent utility and is not affiliated with, sponsored by, or endorsed by Meta, Google, or TikTok. All trademarks belong to their respective owners.

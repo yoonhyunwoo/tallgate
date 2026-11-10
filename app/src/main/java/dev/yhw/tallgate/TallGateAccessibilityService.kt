@@ -135,13 +135,22 @@ class TallGateAccessibilityService : AccessibilityService() {
      * Clicks the Home tab to return to the main feed, falling back to global back navigation.
      */
     private fun redirectToInstagramHome(root: AccessibilityNodeInfo, toastRes: Int) {
-        val homeTab = root.findAccessibilityNodeInfosByViewId("$IG_ID/feed_switcher").firstOrNull()
-        if (homeTab != null) {
-            homeTab.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        escapeViaHomeTab(
+            root.findAccessibilityNodeInfosByViewId("$IG_ID/feed_switcher").firstOrNull { it.isVisibleToUser },
+            toastRes,
+        )
+    }
+
+    /**
+     * Leaves a short-form screen by clicking the app's Home tab, which keeps the app open.
+     * Falls back to back navigation when the tab is missing or the click is rejected.
+     */
+    private fun escapeViaHomeTab(homeTab: AccessibilityNodeInfo?, toastRes: Int) {
+        if (homeTab?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true) {
+            announceBlock(toastRes)
         } else {
-            performGlobalAction(GLOBAL_ACTION_BACK)
+            escapeWithBack(toastRes)
         }
-        announceBlock(toastRes)
     }
 
     private fun announceBlock(toastRes: Int) {
@@ -163,10 +172,15 @@ class TallGateAccessibilityService : AccessibilityService() {
                 root.findAccessibilityNodeInfosByViewId("$YT_ID/reel_player_page_container").any { it.isVisibleToUser }
 
         if (isShortsScreen) {
-            Log.i(TAG, "YouTube: Shorts detected -> escaping with back")
-            escapeWithBack(R.string.toast_blocked_shorts)
+            Log.i(TAG, "YouTube: Shorts detected -> leaving via Home tab")
+            escapeViaHomeTab(youTubeHomeTab(root), R.string.toast_blocked_shorts)
         }
     }
+
+    private fun youTubeHomeTab(root: AccessibilityNodeInfo): AccessibilityNodeInfo? =
+        root.findAccessibilityNodeInfosByViewId("$YT_ID/pivot_bar").firstOrNull()?.findDeepNode(maxDepth = 4) {
+            it.isClickable && it.isVisibleToUser && it.desc.trim() in YT_HOME_LABELS
+        }
 
     private fun handleTikTok(trigger: Trigger) {
         if (!prefs.isTikTokFeedBlocked) return
@@ -222,6 +236,7 @@ class TallGateAccessibilityService : AccessibilityService() {
         private const val PKG_TIKTOK_ASIA = "com.ss.android.ugc.trill"
         private const val IG_ID = "$PKG_INSTAGRAM:id"
         private const val YT_ID = "$PKG_YOUTUBE:id"
+        private val YT_HOME_LABELS = setOf("home", "홈")
 
         @Volatile
         var isRunning = false
@@ -251,5 +266,18 @@ class TallGateAccessibilityService : AccessibilityService() {
         ): Boolean =
             predicate(this) ||
                 (depth < maxDepth && (0 until childCount).any { getChild(it)?.hasDeepNode(maxDepth, depth + 1, predicate) == true })
+
+        private fun AccessibilityNodeInfo.findDeepNode(
+            maxDepth: Int,
+            depth: Int = 0,
+            predicate: (AccessibilityNodeInfo) -> Boolean,
+        ): AccessibilityNodeInfo? {
+            if (predicate(this)) return this
+            if (depth >= maxDepth) return null
+            for (index in 0 until childCount) {
+                getChild(index)?.findDeepNode(maxDepth, depth + 1, predicate)?.let { return it }
+            }
+            return null
+        }
     }
 }
